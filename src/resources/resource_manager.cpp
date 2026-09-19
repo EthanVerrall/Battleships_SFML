@@ -83,13 +83,4 @@ void Resource_manager::clear() {
     _sound_buffers.clear();
 }
 
-// ----------------------------------------------------------------------------
-void Resource_manager::stop_all_music() {
-
-    for (auto& [name, music] : _music) {
-
-        music->stop();
-    }
-}
-
 }

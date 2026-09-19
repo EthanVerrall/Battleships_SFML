@@ -50,8 +50,6 @@ public:
 
     void clear();
 
-    void stop_all_music();
-
 private:
     Resource_manager() = default;
 
