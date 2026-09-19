@@ -77,7 +77,6 @@ void Resource_manager::flush_unused() {
 // ----------------------------------------------------------------------------
 void Resource_manager::clear() {
 
-    stop_all_music();
     _resources.clear();
     _music.clear();
     _sound_buffers.clear();
