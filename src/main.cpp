@@ -14,7 +14,7 @@ int main()
             // "close requested" event: we close the window
             if (event->is<sf::Event::Closed>())
                 window.close();
-            
+
             // "Close window if pressing escape
             if (const auto key_event = event->getIf<sf::Event::KeyPressed>()) {
 
