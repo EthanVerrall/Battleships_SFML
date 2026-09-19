@@ -184,6 +184,11 @@ enum class SFML_event_type : std::uint16_t {
     KEYRELEASE_PAUSE
 };
 
+enum class Game_event_type {
+
+    PENDING_MENU_CHANGE
+};
+
 // ============================================================================
 // Stream operator
 // ----------------------------------------------------------------------------
@@ -582,10 +587,17 @@ inline std::ostream& operator<<(
     }
 }
 
-// ============================================================================
-// Using directives
-// ----------------------------------------------------------------------------
+inline std::ostream& operator<<(
+    std::ostream& os,
+    Game_event_type const type
+    ) {
 
-using Game_event_type = std::string;
+    switch (type) {
+
+        case Game_event_type::PENDING_MENU_CHANGE: return os << "PENDING MENU CHANGE";
+
+        default: return os << "UNKNOWN GAME EVENT TYPE";
+    }
+}
 
 }
