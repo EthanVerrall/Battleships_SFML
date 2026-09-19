@@ -88,10 +88,23 @@ public:
     //--------------------------
     // Class specific functions
     //--------------------------
+public:
+
+    void draw() override;
+    void update(float const dt) override;
 
     //--------------------------
     // Getters
     //--------------------------
+public:
+
+    unsigned int get_size() const;
+    sf::Vector2f get_scale() const override;
+    sf::Vector2f get_pos() const override;
+    std::string_view get_text() const;
+    const sf::Font& get_font() const;
+    sf::Color get_color() const;
+    Widget_border get_border() const;
 
     //--------------------------
     // Setters
@@ -99,7 +112,12 @@ public:
 public:
 
     void set_size(const unsigned int pos);
+    void set_scale(sf::Vector2f const scale) override;
     void set_pos(sf::Vector2f const pos) override;
+    void set_text(const std::string_view text);
+    void set_font(const sf::Font& font);
+    void set_color(const sf::Color color);
+    void set_border(const Widget_border border);
 
     //--------------------------
     // Attributes
