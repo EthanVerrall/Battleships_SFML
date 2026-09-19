@@ -10,7 +10,9 @@
 #include "SFML/Graphics.hpp"
 
 #include <string_view>
+#include <string>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 
 // ============================================================================
@@ -60,16 +62,19 @@ private:
     void _handle_event__mouse_button_left_release();
     void _handle_event__mouse_moved();
 
-    enum class State {
+    enum State : std::uint8_t {
 
-        ENABLED_HOVERING,
-        ENABLED_NOT_HOVERING,
-        DISABLED,
+        NONE     = 0,
+        HOVERING = 1 << 0,
+        DISABLED = 1 << 1,
+        HIDDEN   = 1 << 2,
 
-        DEFAULT = ENABLED_NOT_HOVERING
-    } _state;
-    std::string_view _to_string(State const state);
-    void _change_state(State const state);
+        DEFAULT = NONE
+    }; std::uint8_t _state;
+
+    std::string _state_to_string(std::uint8_t const state);
+    void _set_flag(State const flag, bool const value);
+    bool _has_flag(State const flag) const;
 
     //--------------------------
     // Getters
@@ -84,6 +89,7 @@ public:
 
     bool is_enabled() const;
     bool is_hovering() const;
+    bool is_visible() const;
 
     //--------------------------
     // Setters
@@ -107,6 +113,8 @@ public:
     void set_text_border(Widget_border const border);
 
     void set_text_char_size(std::size_t const size);
+
+    void set_visible(bool const visible);
 
     //--------------------------
     // Attributes

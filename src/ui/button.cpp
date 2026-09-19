@@ -68,9 +68,9 @@ Button::~Button() {
 // ----------------------------------------------------------------------------
 void Button::draw() {
 
-    if (_state == State::DISABLED) {
+    if (_has_flag(State::HIDDEN)) {
 
-        // Disabled so don't draw
+        // Not visible so don't draw
     } else {
 
         if (_text != nullptr) { _window.draw(*_text); }
@@ -91,21 +91,7 @@ void Button::enable(
     bool const enable
     ) {
 
-    bool const is_the_btn_enabled = this->is_enabled();
-
-    if (enable && is_the_btn_enabled) {
-
-        // Already enabled
-    } else if (enable && !is_the_btn_enabled) {
-
-        _change_state(State::ENABLED_NOT_HOVERING);
-    } else if (!enable && is_the_btn_enabled) {
-
-        _change_state(State::DISABLED);
-    } else {
-
-        // Already disabled
-    }
+    _set_flag(State::DISABLED, !enable);
 }
 
 // ----------------------------------------------------------------------------
@@ -129,7 +115,7 @@ void Button::_register_events() {
 // ----------------------------------------------------------------------------
 void Button::_handle_event__mouse_button_left_release() {
 
-    if (_state != State::DISABLED && is_hovering() && _on_left_click) {
+    if (!_has_flag(State::DISABLED) && is_hovering() && _on_left_click) {
 
         LOG(Log_lvl::TRACE) << "Button left clicked";
 
@@ -140,15 +126,15 @@ void Button::_handle_event__mouse_button_left_release() {
 // ----------------------------------------------------------------------------
 void Button::_handle_event__mouse_moved() {
 
-    if (_state == State::DISABLED) {
+    if (_has_flag(State::DISABLED)) {
 
         // Do nothing
-    } else if (_state == State::ENABLED_HOVERING) {
+    } else if (_has_flag(State::HOVERING)) {
 
         // Already in hovering state so check if we are no longer hovering anymore
         if (!is_hovering() && _on_exit_hover) {
 
-            _change_state(State::ENABLED_NOT_HOVERING);
+            _set_flag(State::HOVERING, false);
             _on_exit_hover();
         }
     } else {
@@ -156,36 +142,52 @@ void Button::_handle_event__mouse_moved() {
         // Not in hovering state so check if we are now hovering
         if (is_hovering() && _on_hover) {
 
-            _change_state(State::ENABLED_HOVERING);
+            _set_flag(State::HOVERING, true);
             _on_hover();
         }
     }
 }
 
 // ----------------------------------------------------------------------------
-std::string_view Button::_to_string(
-    State const state
+std::string Button::_state_to_string(
+    std::uint8_t const state
     ) {
 
-    switch (state) {
+    if (state == State::NONE) { return "NONE"; }
 
-        case State::DISABLED: return "DISABLED";
-        case State::ENABLED_HOVERING: return "ENABLED_HOVERING";
-        case State::ENABLED_NOT_HOVERING: return "ENABLED_NOT_HOVERING";
+    std::string result;
 
-        default: return "UNKNOWN";
-    }
+    if (state & State::HOVERING) { result += "HOVERING|"; }
+    if (state & State::DISABLED) { result += "DISABLED|"; }
+    if (state & State::HIDDEN) { result += "HIDDEN|"; }
+
+    if (!result.empty()) { result.pop_back(); }
+
+    return result;
 }
 
 // ----------------------------------------------------------------------------
-void Button::_change_state(
-    State const state
+void Button::_set_flag(
+    State const flag,
+    bool const value
     ) {
 
-    LOG(Log_lvl::TRACE) << "Changing button state from " <<
-    _to_string(_state) << " to " << _to_string(state);
+    std::uint8_t const new_state = value ? (_state | flag) : (_state & ~flag);
 
-    _state = state;
+    if (new_state == _state) { return; }
+
+    LOG(Log_lvl::TRACE) << "Changing button state from " <<
+    _state_to_string(_state) << " to " << _state_to_string(new_state);
+
+    _state = new_state;
+}
+
+// ----------------------------------------------------------------------------
+bool Button::_has_flag(
+    State const flag
+    ) const {
+
+    return (_state & flag) != 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -229,7 +231,13 @@ std::string_view Button::get_text_str() const {
 // ----------------------------------------------------------------------------
 bool Button::is_enabled() const {
 
-    return (_state == State::ENABLED_HOVERING) || (_state == State::ENABLED_NOT_HOVERING);
+    return !_has_flag(State::DISABLED);
+}
+
+// ----------------------------------------------------------------------------
+bool Button::is_visible() const {
+
+    return !_has_flag(State::HIDDEN);
 }
 
 // ----------------------------------------------------------------------------
@@ -403,6 +411,14 @@ void Button::set_text_char_size(
 
         _text->setCharacterSize(size);
     }
+}
+
+// ----------------------------------------------------------------------------
+void Button::set_visible(
+    bool const visible
+    ) {
+
+    _set_flag(State::HIDDEN, !visible);
 }
 
 }
