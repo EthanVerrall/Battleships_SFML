@@ -38,8 +38,8 @@ struct Widget_data {
 
 struct Widget_border {
 
-    sf::Color border_color;
-    float border_size;
+    sf::Color _color;
+    float _size;
 };
 
 // ============================================================================
@@ -59,9 +59,6 @@ protected:
         )
         : _window(window)
         , _data(data)
-        , _border(Widget_border{.border_color = utils::colors::DEFAULT_BORDER, 
-                                .border_size = 0.0f }
-        )
     {}
 
 public:
@@ -84,8 +81,6 @@ public:
 
     Widget_data get_data() const { return _data; }
 
-    Widget_border get_border() const { return _border; }
-
     virtual sf::Vector2f get_pos() const = 0;
 
     virtual sf::Vector2f get_scale() const = 0;
@@ -94,12 +89,10 @@ public:
     // Setters
     //--------------------------
 public:
-    
-    void set_border(const Widget_border widget_border) { _border = widget_border; }
 
     virtual void set_pos(sf::Vector2f const pos) = 0;
 
-    virtual sf::Vector2f set_scale(sf::Vector2f const scale) = 0;
+    virtual void set_scale(sf::Vector2f const scale) = 0;
     
     //--------------------------
     // Attributes
@@ -108,7 +101,6 @@ protected:
 
     sf::RenderWindow & _window;
     Widget_data _data;
-    Widget_border _border;
 };
 
 }
