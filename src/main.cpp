@@ -1,4 +1,5 @@
 #include "ui/include/button.hpp"
+#include "ui/include/label.hpp"
 #include "ui/include/widget.hpp"
 #include "events/include/sfml_event_manager.hpp"
 #include "utils/include/logger.hpp"
@@ -14,6 +15,14 @@ int main() {
     // create the window
     sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
 
+    // create a label
+    ui::Label label(window, "test_label");
+    label.set_text("Test label");
+    label.set_char_size(32u);
+    label.set_pos({300.0f, 380.0f});
+    label.set_border(ui::Widget_border{ .color = sf::Color::Green, .size = 2.0f });
+    label.set_color(sf::Color::Red);
+
     // create a button
     ui::Button button(window, "test_button");
     button.set_text("Click me");
@@ -21,8 +30,8 @@ int main() {
     button.set_pos({300.0f, 280.0f});
     button.set_text_border(ui::Widget_border{ .color = utils::colors::DEFAULT_BORDER, .size = 2.0f });
 
-    button.set_on_left_click([]() {
-        LOG(utils::Log_lvl::INFO) << "Button clicked!";
+    button.set_on_left_click([&label]() {
+        label.set_text("IM CLICKED!");
         });
 
     button.set_on_hover([&button]() {
@@ -58,6 +67,8 @@ int main() {
         window.clear(sf::Color::Black);
 
         button.draw();
+
+        label.draw();
 
         // end the current frame
         window.display();
