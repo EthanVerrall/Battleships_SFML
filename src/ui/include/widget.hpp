@@ -93,7 +93,7 @@ public:
     virtual void set_pos(sf::Vector2f const pos) = 0;
 
     virtual void set_scale(sf::Vector2f const scale) = 0;
-    
+
     //--------------------------
     // Attributes
     //--------------------------
