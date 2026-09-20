@@ -25,13 +25,13 @@ Label::Label(
     , _font_name("pixel_bold") 
     , _is_visible(true)
 {   
-    if (const auto temp_font = resources::Asset_registry::load_font("pixel_bold")) {
+    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
         _font = std::move(temp_font);
         _text = std::make_unique<sf::Text>(*_font);
         LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
     }
     else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load font " << "pixel_bold for label " << widget_name << '\n';
+        LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for label " << widget_name << '\n';
     }
 }
 
@@ -46,11 +46,9 @@ Label::Label(
     , _font_name(font_name)
     , _is_visible(true)
 {   
-    if (const auto temp_font = resources::Asset_registry::load_font("pixel_bold")) {
+    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
         _font = std::move(temp_font);
-        _text = std::make_unique<sf::Text>(*_font);
-        set_text(text);
-        set_char_size(character_size);
+        _text = std::make_unique<sf::Text>(*_font, text, character_size);
 
         LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
     }
@@ -71,11 +69,9 @@ Label::Label(
     , _font_name(font_name)
     , _is_visible(true)
 {   
-    if (const auto temp_font = resources::Asset_registry::load_font("pixel_bold")) {
+    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
         _font = std::move(temp_font);
-        _text = std::make_unique<sf::Text>(*_font);
-        set_text(text);
-        set_char_size(character_size);
+        _text = std::make_unique<sf::Text>(*_font, text, character_size);
         set_pos(pos);
 
         LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
@@ -91,13 +87,7 @@ Label::Label(
 //--------------------------
     void Label::draw() {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << "Unable to draw " << _data.name << " object is nullptr.\n";
-            return;
-        }
-
-        if (!_is_visible) {
-            LOG(utils::Log_lvl::TRACE) << _data.name << " is currently invisible and not being drawn.\n";
+        if (!_text || !_is_visible) {
             return;
         }
 
@@ -153,7 +143,7 @@ Label::Label(
         }
     }
 
-    std::string_view Label::get_font() const {
+    std::string_view Label::get_font_name() const {
 
         if (!_font || !_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " font or text is nullptr. Can't find a font to return.\n";
@@ -179,12 +169,12 @@ Label::Label(
             
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default border returned.\n";
-            return Widget_border {._color = utils::colors::DEFAULT_BORDER , ._size = 0.0f };
+            return Widget_border {.color = utils::colors::DEFAULT_BORDER , .size = 0.0f };
         }
         else {
             Widget_border border_data {
-                ._color = _text->getOutlineColor() ,
-                ._size = _text->getOutlineThickness()
+                .color = _text->getOutlineColor() ,
+                .size = _text->getOutlineThickness()
             };
             return border_data;
         }
@@ -236,16 +226,17 @@ Label::Label(
         }
     }
 
-    void Label::set_font(const std::string_view font) {
+    void Label::set_font(const std::string_view font_name) {
 
-        if (!_font || !_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " font or text is nullptr, can't set font.\n";
+        if (!_text) {
+            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set font.\n";
         }
         else {
 
-            if (const auto temp_font = resources::Asset_registry::load_font(font)) {
+            if (const auto temp_font = resources::Asset_registry::load_font(font_name)) {
                 _font = std::move(temp_font);
                 _text->setFont(*_font);
+                _font_name = font_name;
             }
             else {
                 LOG(utils::Log_lvl::WARN) << "failed to change font for " << _data.name << ", font was nullptr.\n";
@@ -269,8 +260,8 @@ Label::Label(
             LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set border.\n";
         }
         else {
-            _text->setOutlineColor(border._color);
-            _text->setOutlineThickness(border._size);
+            _text->setOutlineColor(border.color);
+            _text->setOutlineThickness(border.size);
         }
     }
 

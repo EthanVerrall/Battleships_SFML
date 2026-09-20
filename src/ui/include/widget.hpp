@@ -38,8 +38,8 @@ struct Widget_data {
 
 struct Widget_border {
 
-    sf::Color _color;
-    float _size;
+    sf::Color color;
+    float size;
 };
 
 // ============================================================================
