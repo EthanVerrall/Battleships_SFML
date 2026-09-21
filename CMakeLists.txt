@@ -23,7 +23,14 @@ FetchContent_Declare(
     GIT_SHALLOW ON
     )
 
-FetchContent_MakeAvailable(SFML)
+FetchContent_Declare(
+    tomlplusplus
+    GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
+    GIT_TAG v3.4.0
+    GIT_SHALLOW ON
+    )
+
+FetchContent_MakeAvailable(SFML tomlplusplus)
 
 # ---------------------------------------------------------------------------
 # Sources
@@ -45,6 +52,8 @@ target_link_libraries(Battleships PRIVATE
     )
 
 target_link_libraries(Battleships PRIVATE freetype)
+
+target_link_libraries(Battleships PRIVATE tomlplusplus::tomlplusplus)
 
 target_compile_features(Battleships PRIVATE cxx_std_23)
 
