@@ -136,10 +136,14 @@ void Settings_manager::_emit_event___settings_changed(
     std::string_view const key
     ) {
 
+    Game_event_type const event = Game_event_type::SETTINGS_CHANGED;
+
+    LOG(Log_lvl::TRACE) << "Emitting event: " << event;
+
     auto& game_event_manager = Game_event_manager::instance();
 
     game_event_manager.emit(
-        Game_event_type::SETTINGS_CHANGED,
+        event,
         Game_event_data{ .payload = key }
         );
 }
