@@ -63,7 +63,9 @@ public:
 
     virtual void update(float const dt) = 0;
 
-    void emit_event___pending_menu_change(
+protected:
+
+    void _emit_event___pending_menu_change(
         Menu_id const menu_id
         ) {
 
