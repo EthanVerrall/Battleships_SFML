@@ -27,7 +27,7 @@ namespace battleships::ui {
 
 class Button
     : public Widget
-    , public battleships::event::Event_listener
+    , public battleships::events::Event_listener
     {
 
     //--------------------------

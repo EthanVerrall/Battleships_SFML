@@ -10,7 +10,7 @@
 // Namespaces
 // ----------------------------------------------------------------------------
 
-namespace battleships::event {
+namespace battleships::events {
 
 // ============================================================================
 // Class Event_listener

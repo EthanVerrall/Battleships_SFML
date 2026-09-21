@@ -42,18 +42,18 @@ int main() {
         button.set_text_color(utils::colors::DEFAULT_TEXT);
         });
 
-    auto& event_manager = event::SFML_event_manager::instance();
+    auto& event_manager = events::SFML_event_manager::instance();
     auto& resource_manager = resources::Resource_manager::instance();
 
     event_manager.register_callback(
-        event::SFML_event_type::WINDOW_CLOSED,
-        [&window](event::SFML_event_data const&) { window.close(); },
+        events::SFML_event_type::WINDOW_CLOSED,
+        [&window](events::SFML_event_data const&) { window.close(); },
         0u
         );
 
     event_manager.register_callback(
-        event::SFML_event_type::KEYPRESS_ESCAPE,
-        [&window](event::SFML_event_data const&) { window.close(); },
+        events::SFML_event_type::KEYPRESS_ESCAPE,
+        [&window](events::SFML_event_data const&) { window.close(); },
         0u
         );
 

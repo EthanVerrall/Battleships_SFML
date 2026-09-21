@@ -8,7 +8,7 @@
 // Namespaces
 // ----------------------------------------------------------------------------
 
-namespace battleships::event {
+namespace battleships::events {
 
 // ============================================================================
 // Class Game_event_manager

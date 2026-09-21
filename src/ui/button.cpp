@@ -20,7 +20,7 @@ namespace battleships::ui {
 // ----------------------------------------------------------------------------
 
 using namespace battleships::resources;
-using namespace battleships::event;
+using namespace battleships::events;
 using namespace battleships::utils;
 
 // ============================================================================
