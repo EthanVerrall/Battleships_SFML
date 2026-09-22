@@ -186,7 +186,8 @@ enum class SFML_event_type : std::uint16_t {
 
 enum class Game_event_type {
 
-    PENDING_MENU_CHANGE
+    PENDING_MENU_CHANGE,
+    SETTINGS_CHANGED
 };
 
 // ============================================================================
@@ -595,6 +596,7 @@ inline std::ostream& operator<<(
     switch (type) {
 
         case Game_event_type::PENDING_MENU_CHANGE: return os << "PENDING MENU CHANGE";
+        case Game_event_type::SETTINGS_CHANGED: return os << "SETTINGS CHANGED";
 
         default: return os << "UNKNOWN GAME EVENT TYPE";
     }
