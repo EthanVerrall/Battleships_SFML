@@ -79,7 +79,7 @@ void Menu_manager::change_menu(
     Menu_id const menu_id
     ) {
 
-    LOG(Log_lvl::WARN) << "Changing menu to " << to_string(menu_id);
+    LOG(Log_lvl::TRACE) << "Changing menu to " << to_string(menu_id);
 
     _curr_menu = _create_menu(menu_id);
 
