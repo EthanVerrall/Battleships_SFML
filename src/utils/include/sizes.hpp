@@ -12,17 +12,11 @@
 
 namespace battleships::utils {
 
-namespace colors {
+namespace sizes {
 
-//Defaults
-inline constexpr sf::Color DEFAULT_BACKGROUND(sf::Color::Black);
-inline constexpr sf::Color DEFAULT_BORDER(sf::Color::Black);
-inline constexpr sf::Color DEFAULT_TEXT(sf::Color::White);
-
-//Headings
-inline constexpr sf::Color HEADING_BORDER(sf::Color::Yellow);
-inline constexpr sf::Color HEADING_TEXT(sf::Color::Red);
-
+    //Headings
+    inline constexpr unsigned int HEADING_TEXT {100u};
+    inline constexpr float HEADING_BORDER {6.0f};
 }
 
 }

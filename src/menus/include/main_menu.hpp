@@ -52,10 +52,15 @@ public:
 private:
 
     void build_title_lbl();
-    void build_playgame_btn();
+    void build_play_game_btn();
     void build_scoreboard_btn();
     void build_options_btn();
     void build_profile_btn();
+
+    //--------------------------
+    // Getters
+    //--------------------------
+private:   
     sf::Vector2f get_window_mp() const;
 
     //--------------------------
@@ -64,7 +69,7 @@ private:
 private:
 
     std::unique_ptr<ui::Label> _title_lbl;
-    std::unique_ptr<ui::Button> _playgame_btn;
+    std::unique_ptr<ui::Button> _play_game_btn;
     std::unique_ptr<ui::Button> _scoreboard_btn;
     std::unique_ptr<ui::Button> _options_btn;
     std::unique_ptr<ui::Button> _profile_btn;

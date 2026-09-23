@@ -167,7 +167,7 @@ Label::Label(
         }
     }
 
-    sf::Color Label::get_color() const {
+    sf::Color Label::get_text_color() const {
 
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default color returned.";
@@ -263,7 +263,7 @@ Label::Label(
         }
     }
 
-    void Label::set_color(const sf::Color color) {
+    void Label::set_text_color(const sf::Color color) {
 
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set color.";
