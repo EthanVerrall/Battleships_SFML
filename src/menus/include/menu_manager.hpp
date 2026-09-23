@@ -24,7 +24,7 @@ namespace battleships::menu {
 // ----------------------------------------------------------------------------
 
 class Menu_manager final
-    : public battleships::event::Event_listener
+    : public battleships::events::Event_listener
     {
 
     //--------------------------
@@ -61,7 +61,7 @@ private:
 
     void _register_events();
 
-    void _handle_event__pending_menu_change(battleships::event::Game_event_data const& data);
+    void _handle_event__pending_menu_change(battleships::events::Game_event_data const& data);
 
     //--------------------------
     // Getters

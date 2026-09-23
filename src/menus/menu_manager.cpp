@@ -18,7 +18,7 @@ namespace battleships::menu {
 // ----------------------------------------------------------------------------
 
 using namespace battleships::utils;
-using namespace battleships::event;
+using namespace battleships::events;
 
 // ============================================================================
 // Class Menu_manager

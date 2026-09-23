@@ -52,6 +52,11 @@ public:
 
     ~Label() = default; 
     
+    Label(Label const&) = delete;
+    Label& operator=(Label const&) = delete;
+    Label(Label&&) = delete;
+    Label& operator=(Label&&) = delete;
+
     //--------------------------
     // Class specific functions
     //--------------------------

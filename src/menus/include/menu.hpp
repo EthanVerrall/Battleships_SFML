@@ -69,16 +69,16 @@ protected:
         Menu_id const menu_id
         ) {
 
-        battleships::event::Game_event_type const event =
-            battleships::event::Game_event_type::PENDING_MENU_CHANGE;
+        battleships::events::Game_event_type const event =
+            battleships::events::Game_event_type::PENDING_MENU_CHANGE;
 
         LOG(battleships::utils::Log_lvl::TRACE) << "Emitting event: " << event;
 
-        auto& game_event_manager = battleships::event::Game_event_manager::instance();
+        auto& game_event_manager = battleships::events::Game_event_manager::instance();
 
         game_event_manager.emit(
             event,
-            battleships::event::Game_event_data{ .payload = menu_id }
+            battleships::events::Game_event_data{ .payload = menu_id }
             );
     }
 

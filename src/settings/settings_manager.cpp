@@ -24,7 +24,7 @@ namespace battleships::settings {
 // ----------------------------------------------------------------------------
 
 using namespace battleships::utils;
-using namespace battleships::event;
+using namespace battleships::events;
 
 // ============================================================================
 // Class Settings_manager
