@@ -71,6 +71,7 @@ public:
 public:
 
     unsigned int get_char_size() const;
+    sf::Vector2f get_size() const override;
     sf::Vector2f get_scale() const override;
     sf::Vector2f get_pos() const override;
     std::string_view get_text() const;
@@ -85,6 +86,7 @@ public:
 public:
 
     void set_char_size(const unsigned int char_size);
+    void set_size(const sf::Vector2f size) override;
     void set_scale(sf::Vector2f const scale) override;
     void set_pos(sf::Vector2f const pos) override;
     void set_text(const std::string_view text);

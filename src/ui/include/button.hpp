@@ -83,6 +83,8 @@ public:
 
     sf::Vector2f get_pos() const override;
 
+    sf::Vector2f get_size() const override;
+
     sf::Vector2f get_scale() const override;
 
     std::string_view get_text_str() const;
@@ -97,6 +99,8 @@ public:
 public:
 
     void set_pos(sf::Vector2f const pos) override;
+
+    void set_size(sf::Vector2f const size) override;
 
     void set_scale(sf::Vector2f const scale) override;
 

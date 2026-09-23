@@ -28,6 +28,7 @@ class Main_menu : public Menu {
     // Constructor / Destructor
     //--------------------------
 public:
+
     Main_menu(sf::RenderWindow& window);
 
     ~Main_menu() = default;
@@ -44,6 +45,18 @@ public:
 
     void draw() override;
     void update(float const dt) override;
+
+    //--------------------------
+    // Class builder functions
+    //--------------------------
+private:
+
+    void build_title_lbl();
+    void build_playgame_btn();
+    void build_scoreboard_btn();
+    void build_options_btn();
+    void build_profile_btn();
+    sf::Vector2f get_window_mp() const;
 
     //--------------------------
     // Attributes

@@ -1,49 +1,38 @@
+//UI Elements
 #include "ui/include/button.hpp"
 #include "ui/include/label.hpp"
-#include "ui/include/widget.hpp"
-#include "events/include/sfml_event_manager.hpp"
-#include "utils/include/logger.hpp"
-#include "utils/include/colors.hpp"
-#include "resources/include/resource_manager.hpp"
 
+//Managers
+#include "events/include/sfml_event_manager.hpp"
+#include "resources/include/resource_manager.hpp"
+#include "menus/include/menu_manager.hpp"
+#include "menus/include/main_menu.hpp"
+
+//Logging And Tests
+#include "utils/include/logger.hpp"
+
+//SFML Dependencies 
 #include <SFML/Graphics.hpp>
 
+//Project namespace
 using namespace battleships;
 
 int main() {
 
     // create the window
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
+    sf::RenderWindow window(
+        sf::VideoMode(
+                    {1920, 1080}), 
+                    "Battleships",
+                    sf::Style::Default,
+                    sf::State::Fullscreen,
+                    sf::ContextSettings{.antiAliasingLevel = 16});
 
-    // create a label
-    ui::Label label(window, "test_label");
-    label.set_text("Test label");
-    label.set_char_size(32u);
-    label.set_pos({300.0f, 380.0f});
-    label.set_border(ui::Widget_border{ .color = sf::Color::Green, .size = 2.0f });
-    label.set_color(sf::Color::Red);
-
-    // create a button
-    ui::Button button(window, "test_button");
-    button.set_text("Click me");
-    button.set_text_char_size(32u);
-    button.set_pos({300.0f, 280.0f});
-    button.set_text_border(ui::Widget_border{ .color = utils::colors::DEFAULT_BORDER, .size = 2.0f });
-
-    button.set_on_left_click([&label]() {
-        label.set_text("IM CLICKED!");
-        });
-
-    button.set_on_hover([&button]() {
-        button.set_text_color(sf::Color::Yellow);
-        });
-
-    button.set_on_exit_hover([&button]() {
-        button.set_text_color(utils::colors::DEFAULT_TEXT);
-        });
+    
 
     auto& event_manager = events::SFML_event_manager::instance();
     auto& resource_manager = resources::Resource_manager::instance();
+    //auto& menu_manager = menus::Menu_manager::instance(window);
 
     event_manager.register_callback(
         events::SFML_event_type::WINDOW_CLOSED,
@@ -56,6 +45,8 @@ int main() {
         [&window](events::SFML_event_data const&) { window.close(); },
         0u
         );
+    
+    menus::Main_menu games (window);
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -66,9 +57,10 @@ int main() {
         // clear the window with black color
         window.clear(sf::Color::Black);
 
-        button.draw();
-
-        label.draw();
+        // draw the current active menu
+        //menu_manager.draw();
+        //games.draw();
+        games.draw();
 
         // end the current frame
         window.display();
