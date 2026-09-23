@@ -4,10 +4,10 @@
 // Includes
 // ----------------------------------------------------------------------------
 
-#include "utils/include/logger.hpp"
 #include "ui/include/widget.hpp"
-#include "resources/include/asset_registry.hpp"
+
 #include "SFML/Graphics.hpp"
+
 #include <memory>
 #include <string_view>
 
@@ -29,12 +29,12 @@ class Label : public Widget  {
 public:
 
     Label(
-        sf::RenderWindow& target,
+        sf::RenderWindow& window,
         const std::string_view widget_name
         );
 
     Label(
-        sf::RenderWindow& target,
+        sf::RenderWindow& window,
         const std::string_view widget_name,
         const std::string_view font_name,
         const std::string_view text,
@@ -42,7 +42,7 @@ public:
         );
 
     Label(
-        sf::RenderWindow& target,
+        sf::RenderWindow& window,
         const std::string_view widget_name,
         const std::string_view font_name,
         const std::string_view text,

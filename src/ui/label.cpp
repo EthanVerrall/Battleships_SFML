@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------
 
 #include "include/label.hpp"
+#include "utils/include/logger.hpp"
+#include "resources/include/asset_registry.hpp"
 
 // ============================================================================
 // Namespaces
@@ -18,10 +20,10 @@ namespace battleships::ui {
 // Constructor / Destructor
 //--------------------------    
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
     , _font_name("pixel_bold") 
     , _is_visible(true)
 {   
@@ -36,13 +38,13 @@ Label::Label(
 }
 
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name,
     const std::string_view font_name,
     const std::string_view text,
     const unsigned int character_size
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
 {   
@@ -58,14 +60,14 @@ Label::Label(
 }
 
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name,
     const std::string_view font_name,
     const std::string_view text,
     const unsigned int character_size,
     const sf::Vector2f pos
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
 {   

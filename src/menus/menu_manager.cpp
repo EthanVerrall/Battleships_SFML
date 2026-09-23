@@ -11,7 +11,7 @@
 // Namespaces
 // ----------------------------------------------------------------------------
 
-namespace battleships::menu {
+namespace battleships::menus {
 
 // ============================================================================
 // Using directives
@@ -33,8 +33,8 @@ Menu_manager::Menu_manager(
     , _pending_menu_change(std::nullopt)
     {
 
-    // Create first menu of the game
-    change_menu(Menu_id::FIRST_GAME_MENU);
+    // Create startup menu of the game
+    change_menu(Menu_id::STARTUP_MENU);
 
     _register_events();
 }
