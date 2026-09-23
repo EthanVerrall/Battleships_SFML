@@ -97,6 +97,11 @@ namespace {
         Static_region_entry{ .name = "torpedo", .rect = { { 0.0f, 0.0f }, { 13.0f, 21.0f } } },
     };
 
+    inline constexpr std::array BACKGROUND_REGIONS = {
+
+        Static_region_entry{ .name = "background", .rect = { { 0.0f, 0.0f }, { 1920.0f, 1080.0f } } },
+    };
+
     inline constexpr std::array STATIC_SHEETS = {
 
         Static_sheet_entry{ .name = "battleship_hull", .path = "assets/textures/battleship/ship_battleship_hull.png", .regions = BATTLESHIP_HULL_REGIONS },
@@ -112,6 +117,10 @@ namespace {
         Static_sheet_entry{ .name = "rescue_ship_hull", .path = "assets/textures/rescue_ship/ship_rescue.png", .regions = RESCUE_SHIP_REGIONS },
         Static_sheet_entry{ .name = "submarine_hull", .path = "assets/textures/submarine/ship_sub_marine_hull.png", .regions = SUBMARINE_HULL_REGIONS },
         Static_sheet_entry{ .name = "submarine_weapon", .path = "assets/textures/submarine/weapon_submarine_standard.png", .regions = SUBMARINE_WEAPON_REGIONS },
+
+        Static_sheet_entry{ .name = "background_coast", .path = "assets/textures/backgrounds/coast.png", .regions = BACKGROUND_REGIONS },
+        Static_sheet_entry{ .name = "background_storm", .path = "assets/textures/backgrounds/storm.png", .regions = BACKGROUND_REGIONS },
+        Static_sheet_entry{ .name = "background_sunset", .path = "assets/textures/backgrounds/sunset.png", .regions = BACKGROUND_REGIONS },
     };
 
     // ------------------------------------------------------------------------
@@ -124,13 +133,30 @@ namespace {
     // Audio
     // ------------------------------------------------------------------------
 
-    inline constexpr std::array AUDIO = std::array<Audio_entry, 0>{};
+    inline constexpr std::array AUDIO = {
+
+        Audio_entry{ .name = "engines_of_war", .path = "assets/music/Engines of War.ogg" },
+        Audio_entry{ .name = "fate_of_generation", .path = "assets/music/Fate of a Generation.ogg" },
+        Audio_entry{ .name = "iron_skies", .path = "assets/music/Iron Skies.ogg" },
+        Audio_entry{ .name = "steel_and_resolve", .path = "assets/music/Steel and Resolve.ogg" },
+        Audio_entry{ .name = "the_price_of_freedom", .path = "assets/music/The Price of Freedom.ogg" },
+        Audio_entry{ .name = "the_waiting_hour", .path = "assets/music/The Waiting Hour.ogg" },
+        Audio_entry{ .name = "victory_at_a_cost", .path = "assets/music/Victory at a Cost.ogg" },
+        Audio_entry{ .name = "world_at_war", .path = "assets/music/World at War.ogg" }
+    };
 
     // ------------------------------------------------------------------------
     // Sound effects
     // ------------------------------------------------------------------------
 
-    inline constexpr std::array SOUNDS = std::array<Sound_entry, 0>{};
+    inline constexpr std::array SOUNDS = {
+
+        Sound_entry{ .name = "click", .path = "assets/sfx/click.wav" },
+        Sound_entry{ .name = "hover", .path = "assets/sfx/hover.wav" },
+        Sound_entry{ .name = "launching_missile", .path = "assets/sfx/launching_missile.mp3" },
+        Sound_entry{ .name = "missile_impact", .path = "assets/sfx/missile_impact.mp3" },
+        Sound_entry{ .name = "water_splash", .path = "assets/sfx/water_splash.mp3" },
+    };
 
     // ------------------------------------------------------------------------
     // Fonts
