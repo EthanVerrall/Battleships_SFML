@@ -4,6 +4,7 @@
 
 #include "include/menu_manager.hpp"
 #include "events/include/game_event_manager.hpp"
+#include "menus/include/main_menu.hpp"
 
 #include "SFML/Graphics.hpp"
 
@@ -11,7 +12,7 @@
 // Namespaces
 // ----------------------------------------------------------------------------
 
-namespace battleships::menu {
+namespace battleships::menus {
 
 // ============================================================================
 // Using directives
@@ -33,8 +34,8 @@ Menu_manager::Menu_manager(
     , _pending_menu_change(std::nullopt)
     {
 
-    // Create first menu of the game
-    change_menu(Menu_id::FIRST_GAME_MENU);
+    // Create startup menu of the game
+    change_menu(Menu_id::STARTUP_MENU);
 
     _register_events();
 }
@@ -101,7 +102,7 @@ std::unique_ptr<Menu> Menu_manager::_create_menu(
 
     switch (menu_id) {
 
-        // TODO:    case Menu_id::MAIN_MENU: return std::make_unique<Main_menu>();
+        case Menu_id::MAIN_MENU: return std::make_unique<Main_menu>(_window);
 
         default: return nullptr;
     }

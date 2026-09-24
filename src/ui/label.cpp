@@ -3,6 +3,8 @@
 // ----------------------------------------------------------------------------
 
 #include "include/label.hpp"
+#include "utils/include/logger.hpp"
+#include "resources/include/asset_registry.hpp"
 
 // ============================================================================
 // Namespaces
@@ -18,31 +20,31 @@ namespace battleships::ui {
 // Constructor / Destructor
 //--------------------------    
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
     , _font_name("pixel_bold") 
     , _is_visible(true)
 {   
     if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
         _font = std::move(temp_font);
         _text = std::make_unique<sf::Text>(*_font);
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
+        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
     }
     else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for label " << widget_name << '\n';
+        LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for label " << widget_name;
     }
 }
 
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name,
     const std::string_view font_name,
     const std::string_view text,
     const unsigned int character_size
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
 {   
@@ -50,22 +52,22 @@ Label::Label(
         _font = std::move(temp_font);
         _text = std::make_unique<sf::Text>(*_font, text, character_size);
 
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
+        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
     }
     else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name << '\n';
+        LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
     }
 }
 
 Label::Label(
-    sf::RenderWindow& target,
+    sf::RenderWindow& window,
     const std::string_view widget_name,
     const std::string_view font_name,
     const std::string_view text,
     const unsigned int character_size,
     const sf::Vector2f pos
     )
-    : Widget(target, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
 {   
@@ -74,10 +76,10 @@ Label::Label(
         _text = std::make_unique<sf::Text>(*_font, text, character_size);
         set_pos(pos);
 
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name << '\n';
+        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
     }
     else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name << '\n';
+        LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
     }
 }  
 
@@ -102,7 +104,7 @@ Label::Label(
     unsigned int Label::get_char_size() const {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get char size.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get char size.";
             return 0;
         }
         else {
@@ -110,10 +112,21 @@ Label::Label(
         }
     }
 
+    sf::Vector2f Label::get_size() const {
+
+         if (!_text) {
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get size.";
+            return sf::Vector2f {0.0f , 0.0f};
+        }
+        else {
+            return _text->getGlobalBounds().size;
+        }
+    }
+
     sf::Vector2f Label::get_scale() const {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.";
             return sf::Vector2f {0.0f , 0.0f};
         }
         else {
@@ -124,7 +137,7 @@ Label::Label(
     sf::Vector2f Label::get_pos() const {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get position.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get position.";
             return sf::Vector2f {0.0f , 0.0f}; 
         }
         else {
@@ -135,7 +148,7 @@ Label::Label(
     std::string_view Label::get_text() const {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.";
             return "";
         }
         else {
@@ -146,7 +159,7 @@ Label::Label(
     std::string_view Label::get_font_name() const {
 
         if (!_font || !_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " font or text is nullptr. Can't find a font to return.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " font or text is nullptr. Can't find a font to return.";
             return "";
         }
         else {
@@ -154,10 +167,10 @@ Label::Label(
         }
     }
 
-    sf::Color Label::get_color() const {
+    sf::Color Label::get_text_color() const {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default color returned.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default color returned.";
             return utils::colors::DEFAULT_TEXT;
         }
         else {
@@ -168,7 +181,7 @@ Label::Label(
     Widget_border Label::get_border() const { 
             
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default border returned.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default border returned.";
             return Widget_border {.color = utils::colors::DEFAULT_BORDER , .size = 0.0f };
         }
         else {
@@ -189,17 +202,23 @@ Label::Label(
     void Label::set_char_size(const unsigned int char_size) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set char size.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set char size.";
         }
         else {
             _text->setCharacterSize(char_size);
         }
     }
 
+    void Label::set_size(const sf::Vector2f size) {
+
+        static_cast<void> (size); //Do nothing - throw away
+        LOG(utils::Log_lvl::WARN) << "Setting size for label is unimplemented";
+    }
+
     void Label::set_scale(sf::Vector2f const scale) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set scaling.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set scaling.";
         }
         else {
             _text->setScale(scale);
@@ -209,7 +228,7 @@ Label::Label(
     void Label::set_pos(sf::Vector2f const pos) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set pos.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set pos.";
         }
         else {
             _text->setPosition(pos);
@@ -219,7 +238,7 @@ Label::Label(
     void Label::set_text(const std::string_view text) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set text.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set text.";
         }
         else {
             _text->setString(text);
@@ -229,7 +248,7 @@ Label::Label(
     void Label::set_font(const std::string_view font_name) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set font.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set font.";
         }
         else {
 
@@ -239,15 +258,15 @@ Label::Label(
                 _font_name = font_name;
             }
             else {
-                LOG(utils::Log_lvl::WARN) << "failed to change font for " << _data.name << ", font was nullptr.\n";
+                LOG(utils::Log_lvl::WARN) << "failed to change font for " << _data.name << ", font was nullptr.";
             }
         }
     }
 
-    void Label::set_color(const sf::Color color) {
+    void Label::set_text_color(const sf::Color color) {
 
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set color.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set color.";
         }
         else {
             _text->setFillColor(color);
@@ -257,7 +276,7 @@ Label::Label(
     void Label::set_border(const Widget_border border) {
         
         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set border.\n";
+            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set border.";
         }
         else {
             _text->setOutlineColor(border.color);

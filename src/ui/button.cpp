@@ -204,6 +204,19 @@ sf::Vector2f Button::get_pos() const {
 }
 
 // ----------------------------------------------------------------------------
+sf::Vector2f Button::get_size() const {
+
+    if (_text == nullptr) {
+
+        LOG(Log_lvl::WARN) << "_text == nullptr";
+
+        return {};
+    }
+
+    return _text->getGlobalBounds().size;
+}
+
+// ----------------------------------------------------------------------------
 sf::Vector2f Button::get_scale() const {
 
     if (_text == nullptr) {
@@ -270,6 +283,15 @@ void Button::set_pos(
 
         _text->setPosition(pos);
     }
+}
+
+// ----------------------------------------------------------------------------
+void Button::set_size(
+    sf::Vector2f const size
+    ) {
+    
+    static_cast<void> (size); //Do nothing - throw away
+    LOG(Log_lvl::WARN) << "Setting size for button is unimplemented";   
 }
 
 // ----------------------------------------------------------------------------

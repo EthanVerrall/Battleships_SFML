@@ -34,72 +34,72 @@ namespace {
 
     inline constexpr std::array BATTLESHIP_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 31.0f, 209.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 31, 209 } } },
     };
 
     inline constexpr std::array BATTLESHIP_GUN_REGIONS = {
 
-        Static_region_entry{ .name = "gun", .rect = { { 0.0f, 0.0f }, { 25.0f, 50.0f } } },
+        Static_region_entry{ .name = "gun", .rect = { { 0, 0 }, { 25, 50 } } },
     };
 
     inline constexpr std::array CARRIER_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 57.0f, 189.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 57, 189 } } },
     };
 
     inline constexpr std::array CRUISER_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 23.0f, 128.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 23, 128 } } },
     };
 
     inline constexpr std::array CRUISER_STSM_REGIONS = {
 
-        Static_region_entry{ .name = "stsm", .rect = { { 0.0f, 0.0f }, { 11.0f, 12.0f } } },
+        Static_region_entry{ .name = "stsm", .rect = { { 0, 0 }, { 11, 12 } } },
     };
 
     inline constexpr std::array DESTROYER_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 20.0f, 100.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 20, 100 } } },
     };
 
     inline constexpr std::array DESTROYER_GUN_REGIONS = {
 
-        Static_region_entry{ .name = "gun", .rect = { { 0.0f, 0.0f }, { 15.0f, 26.0f } } },
+        Static_region_entry{ .name = "gun", .rect = { { 0, 0 }, { 15, 26 } } },
     };
 
     inline constexpr std::array PATROL_BOAT_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 13.0f, 55.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 13, 55 } } },
     };
 
     inline constexpr std::array PLANE_MISSILE_REGIONS = {
 
-        Static_region_entry{ .name = "missile", .rect = { { 0.0f, 0.0f }, { 5.0f, 9.0f } } },
+        Static_region_entry{ .name = "missile", .rect = { { 0, 0 }, { 5, 9 } } },
     };
 
     inline constexpr std::array PLANE_F35_REGIONS = {
 
-        Static_region_entry{ .name = "f35", .rect = { { 0.0f, 0.0f }, { 35.0f, 45.0f } } },
+        Static_region_entry{ .name = "f35", .rect = { { 0, 0 }, { 35, 45 } } },
     };
 
     inline constexpr std::array RESCUE_SHIP_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 17.0f, 100.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 17, 100 } } },
     };
 
     inline constexpr std::array SUBMARINE_HULL_REGIONS = {
 
-        Static_region_entry{ .name = "hull", .rect = { { 0.0f, 0.0f }, { 35.0f, 142.0f } } },
+        Static_region_entry{ .name = "hull", .rect = { { 0, 0 }, { 35, 142 } } },
     };
 
     inline constexpr std::array SUBMARINE_WEAPON_REGIONS = {
 
-        Static_region_entry{ .name = "torpedo", .rect = { { 0.0f, 0.0f }, { 13.0f, 21.0f } } },
+        Static_region_entry{ .name = "torpedo", .rect = { { 0, 0 }, { 13, 21 } } },
     };
 
     inline constexpr std::array BACKGROUND_REGIONS = {
 
-        Static_region_entry{ .name = "background", .rect = { { 0.0f, 0.0f }, { 1920.0f, 1080.0f } } },
+        Static_region_entry{ .name = "background", .rect = { { 0, 0 }, { 1920, 1080 } } },
     };
 
     inline constexpr std::array STATIC_SHEETS = {

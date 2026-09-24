@@ -26,16 +26,16 @@ namespace battleships::resources {
 class Static_spritesheet {
 
 public:
-    explicit Static_spritesheet(std::shared_ptr<sf::Texture const> texture);
+    explicit Static_spritesheet(std::shared_ptr<sf::Texture> texture);
 
     void add_region(Static_region_entry const& region);
 
     std::optional<Static_region_entry> get_region(std::string_view const name) const;
 
-    sf::Texture const& texture() const;
+    sf::Texture & texture();
 
 private:
-    std::shared_ptr<sf::Texture const> _texture;
+    std::shared_ptr<sf::Texture> _texture;
     std::unordered_map<std::string_view, Static_region_entry> _regions;
 };
 
@@ -46,7 +46,7 @@ private:
 class Animated_spritesheet {
 
 public:
-    explicit Animated_spritesheet(std::shared_ptr<sf::Texture const> texture);
+    explicit Animated_spritesheet(std::shared_ptr<sf::Texture> texture);
 
     void add_animation(Animation_entry const& animation);
 
@@ -55,10 +55,10 @@ public:
     // Invalidated if add_animation later overwrites this same name
     Animation_entry const* find_animation(std::string_view const name) const;
 
-    sf::Texture const& texture() const;
+    sf::Texture & texture();
 
 private:
-    std::shared_ptr<sf::Texture const> _texture;
+    std::shared_ptr<sf::Texture> _texture;
     std::unordered_map<std::string_view, Animation_entry> _animations;
 };
 

@@ -83,6 +83,8 @@ public:
 
     virtual sf::Vector2f get_pos() const = 0;
 
+    virtual sf::Vector2f get_size() const = 0;
+
     virtual sf::Vector2f get_scale() const = 0;
 
     //--------------------------
@@ -91,6 +93,8 @@ public:
 public:
 
     virtual void set_pos(sf::Vector2f const pos) = 0;
+
+    virtual void set_size(sf::Vector2f const size) = 0;
 
     virtual void set_scale(sf::Vector2f const scale) = 0;
 

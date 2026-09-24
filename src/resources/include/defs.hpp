@@ -34,7 +34,7 @@ enum class Animation_mode : std::uint8_t {
 struct Static_region_entry {
 
     std::string_view name{};
-    sf::FloatRect rect{};
+    sf::IntRect rect{};
 };
 
 struct Static_sheet_entry {
@@ -47,7 +47,7 @@ struct Static_sheet_entry {
 struct Animation_entry {
 
     std::string_view name{};
-    std::span<sf::FloatRect const> frames{};
+    std::span<sf::IntRect const> frames{};
     float fps{};
     Animation_mode mode{};
 };

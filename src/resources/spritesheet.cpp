@@ -23,7 +23,7 @@ using namespace battleships::utils;
 
 // ----------------------------------------------------------------------------
 Static_spritesheet::Static_spritesheet(
-    std::shared_ptr<sf::Texture const> texture
+    std::shared_ptr<sf::Texture> texture
     )
     : _texture(std::move(texture))
     , _regions()
@@ -53,7 +53,7 @@ std::optional<Static_region_entry> Static_spritesheet::get_region(
 }
 
 // ----------------------------------------------------------------------------
-sf::Texture const& Static_spritesheet::texture() const {
+sf::Texture & Static_spritesheet::texture() {
 
     return *_texture;
 }
@@ -64,7 +64,7 @@ sf::Texture const& Static_spritesheet::texture() const {
 
 // ----------------------------------------------------------------------------
 Animated_spritesheet::Animated_spritesheet(
-    std::shared_ptr<sf::Texture const> texture
+    std::shared_ptr<sf::Texture> texture
     )
     : _texture(std::move(texture))
     , _animations()
@@ -94,7 +94,7 @@ std::optional<Animation_entry> Animated_spritesheet::get_animation(
 }
 
 // ----------------------------------------------------------------------------
-sf::Texture const& Animated_spritesheet::texture() const {
+sf::Texture & Animated_spritesheet::texture() {
 
     return *_texture;
 }
