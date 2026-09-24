@@ -45,7 +45,7 @@ Button::Button(
 
     if (font == nullptr) {
 
-        LOG(Log_lvl::WARN) << "font pixel_bold == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": font pixel_bold == nullptr";
     } else {
 
         _font = std::move(font);
@@ -55,6 +55,8 @@ Button::Button(
     set_text_color(colors::DEFAULT_TEXT);
 
     _register_events();
+
+    LOG(Log_lvl::TRACE) << "Created button " << _data.name;
 }
 
 // ----------------------------------------------------------------------------
@@ -117,7 +119,7 @@ void Button::_handle_event__mouse_button_left_release() {
 
     if (!_has_flag(State::DISABLED) && is_hovering() && _on_left_click) {
 
-        LOG(Log_lvl::TRACE) << "Button left clicked";
+        LOG(Log_lvl::TRACE) << _data.name << ": left clicked";
 
         _on_left_click();
     }
@@ -176,7 +178,7 @@ void Button::_set_flag(
 
     if (new_state == _state) { return; }
 
-    LOG(Log_lvl::TRACE) << "Changing button state from " <<
+    LOG(Log_lvl::TRACE) << _data.name << ": changing state from " <<
     _state_to_string(_state) << " to " << _state_to_string(new_state);
 
     _state = new_state;
@@ -195,7 +197,7 @@ sf::Vector2f Button::get_pos() const {
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't get pos.";
 
         return {};
     }
@@ -221,7 +223,7 @@ sf::Vector2f Button::get_scale() const {
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't get scale.";
 
         return {};
     }
@@ -234,7 +236,7 @@ std::string_view Button::get_text_str() const {
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't get text.";
         return {};
     }
 
@@ -258,7 +260,7 @@ bool Button::is_hovering() const {
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't check hovering.";
         return {};
     }
 
@@ -275,10 +277,10 @@ void Button::set_pos(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set pos.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_pos from (" << _text->getPosition().x << ", " << _text->getPosition().y << ") to ("
+        LOG(Log_lvl::TRACE) << _data.name << ": set_pos from (" << _text->getPosition().x << ", " << _text->getPosition().y << ") to ("
         << pos.x << ", " << pos.y << ')';
 
         _text->setPosition(pos);
@@ -301,10 +303,10 @@ void Button::set_scale(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set scale.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_scale from (" << _text->getScale().x << ", " << _text->getScale().y << ") to ("
+        LOG(Log_lvl::TRACE) << _data.name << ": set_scale from (" << _text->getScale().x << ", " << _text->getScale().y << ") to ("
         << scale.x << ", " << scale.y << ')';
 
         _text->setScale(scale);
@@ -316,7 +318,7 @@ void Button::set_on_left_click(
     std::function<void()> call_back
     ) {
 
-    LOG(Log_lvl::TRACE) << "set_on_left_click";
+    LOG(Log_lvl::TRACE) << _data.name << ": set_on_left_click";
 
     _on_left_click = std::move(call_back);
 }
@@ -326,7 +328,7 @@ void Button::set_on_hover(
     std::function<void()> call_back
     ) {
 
-    LOG(Log_lvl::TRACE) << "set_on_hover";
+    LOG(Log_lvl::TRACE) << _data.name << ": set_on_hover";
 
     _on_hover = std::move(call_back);
 }
@@ -336,7 +338,7 @@ void Button::set_on_exit_hover(
     std::function<void()> call_back
     ) {
 
-    LOG(Log_lvl::TRACE) << "_on_exit_hover";
+    LOG(Log_lvl::TRACE) << _data.name << ": set_on_exit_hover";
 
     _on_exit_hover = std::move(call_back);
 }
@@ -348,16 +350,16 @@ void Button::set_font(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set font.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_font to " << font_name;
+        LOG(Log_lvl::TRACE) << _data.name << ": set_font to " << font_name;
 
         auto const font = Asset_registry::load_font(font_name);
 
         if (font == nullptr) {
 
-            LOG(Log_lvl::WARN) << "font " << font_name << " == nullptr";
+            LOG(Log_lvl::WARN) << _data.name << ": font " << font_name << " == nullptr";
         } else {
 
             _font = std::move(font);
@@ -373,10 +375,10 @@ void Button::set_text(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set text.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_text from \"" << _text->getString().toAnsiString() << "\" to \"" << text << '\"';
+        LOG(Log_lvl::TRACE) << _data.name << ": set_text from \"" << _text->getString().toAnsiString() << "\" to \"" << text << '\"';
 
         _text->setString(text);
     }
@@ -389,10 +391,10 @@ void Button::set_text_color(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set text color.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_text_color from " <<
+        LOG(Log_lvl::TRACE) << _data.name << ": set_text_color from " <<
         _text->getFillColor().toInteger() << " to " << color.toInteger();
 
         _text->setFillColor(color);
@@ -406,10 +408,10 @@ void Button::set_text_border(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set text border.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_text_border from (color=" <<
+        LOG(Log_lvl::TRACE) << _data.name << ": set_text_border from (color=" <<
         _text->getOutlineColor().toInteger() << ", size=" <<
         _text->getOutlineThickness() << ") to (color=" << border.color.toInteger() <<
         ", size=" << border.size << ')';
@@ -426,10 +428,10 @@ void Button::set_text_char_size(
 
     if (_text == nullptr) {
 
-        LOG(Log_lvl::WARN) << "_text == nullptr";
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set text char size.";
     } else {
 
-        LOG(Log_lvl::TRACE) << "set_text_char_size from " << _text->getCharacterSize() << " to " << size;
+        LOG(Log_lvl::TRACE) << _data.name << ": set_text_char_size from " << _text->getCharacterSize() << " to " << size;
 
         _text->setCharacterSize(size);
     }
