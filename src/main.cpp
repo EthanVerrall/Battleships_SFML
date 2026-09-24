@@ -32,13 +32,7 @@ int main() {
 
     auto& event_manager = events::SFML_event_manager::instance();
     auto& resource_manager = resources::Resource_manager::instance();
-    //auto& menu_manager = menus::Menu_manager::instance(window);
-
-    event_manager.register_callback(
-        events::SFML_event_type::WINDOW_CLOSED,
-        [&window](events::SFML_event_data const&) { window.close(); },
-        0u
-        );
+    auto& menu_manager = menus::Menu_manager::instance(window);
 
     event_manager.register_callback(
         events::SFML_event_type::KEYPRESS_ESCAPE,
@@ -46,7 +40,6 @@ int main() {
         0u
         );
     
-    menus::Main_menu games (window);
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -58,9 +51,7 @@ int main() {
         window.clear(sf::Color::Black);
 
         // draw the current active menu
-        //menu_manager.draw();
-        //games.draw();
-        games.draw();
+        menu_manager.draw();
 
         // end the current frame
         window.display();

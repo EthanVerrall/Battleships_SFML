@@ -7,6 +7,7 @@
 #include "menus/include/menu.hpp"
 #include "ui/include/button.hpp"
 #include "ui/include/label.hpp"
+#include "resources/include/spritesheet.hpp"
 
 #include "sfml/Graphics.hpp"
 
@@ -56,6 +57,8 @@ private:
     void build_scoreboard_btn();
     void build_options_btn();
     void build_profile_btn();
+    void build_exit_btn();
+    void build_background_image();
 
     //--------------------------
     // Getters
@@ -73,8 +76,10 @@ private:
     std::unique_ptr<ui::Button> _scoreboard_btn;
     std::unique_ptr<ui::Button> _options_btn;
     std::unique_ptr<ui::Button> _profile_btn;
-
-};
+    std::unique_ptr<ui::Button> _exit_btn;
+    std::shared_ptr<resources::Static_spritesheet> _static_spritesheet;
+    std::unique_ptr<sf::Sprite> _background_img;
+};      
 
 }
 

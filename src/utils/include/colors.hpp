@@ -23,6 +23,9 @@ inline constexpr sf::Color DEFAULT_TEXT(sf::Color::White);
 inline constexpr sf::Color HEADING_BORDER(sf::Color::Yellow);
 inline constexpr sf::Color HEADING_TEXT(sf::Color::Red);
 
+//Buttons
+inline constexpr sf::Color BUTTON_TEXT_HOVER(sf::Color::Yellow);
+
 }
 
 }
