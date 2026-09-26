@@ -50,6 +50,8 @@ public:
 
     void clear();
 
+    bool is_loaded(std::string_view const name) const;
+
 private:
     Resource_manager() = default;
 

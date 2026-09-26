@@ -82,4 +82,14 @@ void Resource_manager::clear() {
     _sound_buffers.clear();
 }
 
+// ----------------------------------------------------------------------------
+bool Resource_manager::is_loaded(
+    std::string_view const name
+    ) const {
+
+    return _resources.contains(name)
+        || _music.contains(name)
+        || _sound_buffers.contains(name);
+}
+
 }
