@@ -14,19 +14,19 @@ namespace battleships::ui {
 
 // ============================================================================
 // Class Label
-// ----------------------------------------------------------------------------    
+// ----------------------------------------------------------------------------
 
     //--------------------------
     // Constructor / Destructor
-    //--------------------------    
+    //--------------------------
     Label::Label(
         sf::RenderWindow& window,
         const std::string_view widget_name
         )
         : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
-        , _font_name("pixel_bold") 
+        , _font_name("pixel_bold")
         , _is_visible(true)
-    {   
+    {
         if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
             _font = std::move(temp_font);
             _text = std::make_unique<sf::Text>(*_font);
@@ -44,10 +44,10 @@ namespace battleships::ui {
         const std::string_view text,
         const unsigned int character_size
         )
-        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
         , _font_name(font_name)
         , _is_visible(true)
-    {   
+    {
         if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
             _font = std::move(temp_font);
             _text = std::make_unique<sf::Text>(*_font, text, character_size);
@@ -67,10 +67,10 @@ namespace battleships::ui {
         const unsigned int character_size,
         const sf::Vector2f pos
         )
-        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
         , _font_name(font_name)
         , _is_visible(true)
-    {   
+    {
         if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
             _font = std::move(temp_font);
             _text = std::make_unique<sf::Text>(*_font, text, character_size);
@@ -81,7 +81,7 @@ namespace battleships::ui {
         else {
         LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
         }
-    }  
+    }
 
 
     //--------------------------
@@ -138,7 +138,7 @@ namespace battleships::ui {
 
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get position.";
-            return sf::Vector2f {0.0f , 0.0f}; 
+            return sf::Vector2f {0.0f , 0.0f};
         }
         else {
             return _text->getPosition();
@@ -178,8 +178,8 @@ namespace battleships::ui {
         }
     }
 
-    Widget_border Label::get_border() const { 
-            
+    Widget_border Label::get_border() const {
+
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default border returned.";
             return Widget_border {.color = utils::colors::DEFAULT_BORDER , .size = 0.0f };
@@ -198,7 +198,7 @@ namespace battleships::ui {
 
     //--------------------------
     // Setters
-    //--------------------------    
+    //--------------------------
     void Label::set_char_size(const unsigned int char_size) {
 
         if (!_text) {
@@ -274,7 +274,7 @@ namespace battleships::ui {
     }
 
     void Label::set_border(const Widget_border border) {
-        
+
         if (!_text) {
             LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set border.";
         }

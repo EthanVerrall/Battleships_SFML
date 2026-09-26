@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 // ============================================================================
 // Includes
@@ -63,7 +63,7 @@ private:
     //--------------------------
     // Getters
     //--------------------------
-private:   
+private:
     sf::Vector2f get_window_mp() const;
 
     //--------------------------
@@ -79,7 +79,7 @@ private:
     std::unique_ptr<ui::Button> _exit_btn;
     std::shared_ptr<resources::Static_spritesheet> _static_spritesheet;
     std::unique_ptr<sf::Sprite> _background_img;
-};      
+};
 
 }
 

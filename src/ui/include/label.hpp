@@ -50,8 +50,8 @@ public:
         const sf::Vector2f pos
         );
 
-    ~Label() = default; 
-    
+    ~Label() = default;
+
     Label(Label const&) = delete;
     Label& operator=(Label const&) = delete;
     Label(Label&&) = delete;
@@ -103,7 +103,7 @@ private:
     std::unique_ptr<sf::Text> _text;
     std::shared_ptr<sf::Font> _font;
     std::string_view _font_name;
-    bool _is_visible; 
+    bool _is_visible;
 };
 
 }
