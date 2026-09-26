@@ -74,9 +74,10 @@ inline constexpr char const* SETTINGS_FILE_PATH = "assets/data/settings.toml";
 
 inline Setting_key_entry const SETTING_KEYS[] = {
 
-    { "window state", sf::State{} },
-    { "music volume", float{} },
-    { "sfx volume", float{} },
+    { "window_state", sf::State{} },
+    { "music_volume", float{} },
+    { "sfx_volume", float{} },
+    { "anti_aliasing", std::uint8_t{} }
 };
 
 }

@@ -23,13 +23,13 @@ namespace battleships::menus {
 
 // ============================================================================
 // Class Label
-// ----------------------------------------------------------------------------   
+// ----------------------------------------------------------------------------
 
     //--------------------------
     // Constructor / Destructor
-    //-------------------------- 
-    Main_menu::Main_menu(sf::RenderWindow& window) : Menu::Menu(window) 
-    {   
+    //--------------------------
+    Main_menu::Main_menu(sf::RenderWindow& window) : Menu(window)
+    {
         build_background_image();
         build_title_lbl();
         build_play_game_btn();
@@ -44,10 +44,10 @@ namespace battleships::menus {
     // Class builder functions
     //--------------------------
     void Main_menu::build_title_lbl() {
-        
+
         _title_lbl = std::make_unique<Label> (_window, "Title_label", "pixel_bold","Battleships",sizes::HEADING_TEXT);
 
-        if (!_title_lbl) { 
+        if (!_title_lbl) {
             LOG(utils::Log_lvl::WARN) << "Title_label is nullptr on main menu. Failed to build.";
         }
         else {
@@ -56,7 +56,7 @@ namespace battleships::menus {
             _title_lbl->set_border({.color = colors::HEADING_BORDER, .size = sizes::HEADING_BORDER });
 
             const float label_mpx = _title_lbl->get_size().x / 2.0f;
-            const sf::Vector2f window_mp = get_window_mp(); 
+            const sf::Vector2f window_mp = get_window_mp();
             const sf::Vector2f label_pos {window_mp.x - label_mpx, 50.0f};
             _title_lbl->set_pos(label_pos);
         }
@@ -68,7 +68,7 @@ namespace battleships::menus {
 
         if (!_play_game_btn) {
             LOG(utils::Log_lvl::WARN) << "Play_game_button is nullptr on main menu. Failed to build.";
-        }   
+        }
         else {
 
             _play_game_btn->set_text("Play Game");
@@ -89,7 +89,7 @@ namespace battleships::menus {
             );
 
             const sf::Vector2f button_pos {325.0f, 300.0f};
-            _play_game_btn->set_pos(button_pos); 
+            _play_game_btn->set_pos(button_pos);
         }
 
     }
@@ -100,7 +100,7 @@ namespace battleships::menus {
 
         if (!_scoreboard_btn) {
             LOG(utils::Log_lvl::WARN) << "Scoreboard_button is nullptr on main menu. Failed to build.";
-        }   
+        }
         else {
 
             _scoreboard_btn->set_text("Scoreboard");
@@ -121,7 +121,7 @@ namespace battleships::menus {
             );
 
             const sf::Vector2f button_pos {325.0f, 450.0f};
-            _scoreboard_btn->set_pos(button_pos); 
+            _scoreboard_btn->set_pos(button_pos);
         }
     }
 
@@ -131,7 +131,7 @@ namespace battleships::menus {
 
         if (!_options_btn) {
             LOG(utils::Log_lvl::WARN) << "Options_button is nullptr on main menu. Failed to build.";
-        }   
+        }
         else {
 
             _options_btn->set_text("Options");
@@ -152,7 +152,7 @@ namespace battleships::menus {
             );
 
             const sf::Vector2f button_pos {325.0f, 600.0f};
-            _options_btn->set_pos(button_pos); 
+            _options_btn->set_pos(button_pos);
         }
     }
 
@@ -162,7 +162,7 @@ namespace battleships::menus {
 
         if (!_profile_btn) {
             LOG(utils::Log_lvl::WARN) << "Profile_button is nullptr on main menu. Failed to build.";
-        }   
+        }
         else {
 
             _profile_btn->set_text("Profile");
@@ -183,7 +183,7 @@ namespace battleships::menus {
             );
 
             const sf::Vector2f button_pos {325.0f, 750.0f};
-            _profile_btn->set_pos(button_pos); 
+            _profile_btn->set_pos(button_pos);
         }
     }
 
@@ -193,7 +193,7 @@ namespace battleships::menus {
 
         if (!_exit_btn) {
             LOG(utils::Log_lvl::WARN) << "Exit_button is nullptr on main menu. Failed to build.";
-        }   
+        }
         else {
 
             _exit_btn->set_text("Exit game");
@@ -220,7 +220,7 @@ namespace battleships::menus {
             );
 
             const sf::Vector2f button_pos {325.0f, 900.0f};
-            _exit_btn->set_pos(button_pos); 
+            _exit_btn->set_pos(button_pos);
         }
     }
 
@@ -233,7 +233,7 @@ namespace battleships::menus {
 
         std::mt19937 mt{ ss };
         const int random_num = std::uniform_int_distribution{1, 3}(mt);
-        
+
         switch (random_num) {
 
             case 1:
@@ -257,18 +257,18 @@ namespace battleships::menus {
             LOG(utils::Log_lvl::WARN) << "Static spritesheet was unable to load from asset registry.";
             return;
         }
-        
+
         _static_spritesheet->texture().setSmooth(true);
 
         if (const auto background_region = _static_spritesheet->get_region("background")) {
 
             _background_img = std::make_unique<sf::Sprite> (_static_spritesheet->texture());
             _background_img->setTextureRect(background_region->rect);
-        }   
+        }
         else {
             LOG(utils::Log_lvl::WARN) << "Unable to find region for background image.";
         }
-        
+
     }
 
     void Main_menu::draw() {

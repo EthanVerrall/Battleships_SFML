@@ -291,9 +291,9 @@ void Button::set_pos(
 void Button::set_size(
     sf::Vector2f const size
     ) {
-    
+
     static_cast<void> (size); //Do nothing - throw away
-    LOG(Log_lvl::WARN) << "Setting size for button is unimplemented";   
+    LOG(Log_lvl::WARN) << "Setting size for button is unimplemented";
 }
 
 // ----------------------------------------------------------------------------
