@@ -14,7 +14,7 @@
 namespace battleships::app {
 
 // ============================================================================
-// Class Label
+// Class App
 // ----------------------------------------------------------------------------
 
     //--------------------------
@@ -65,6 +65,11 @@ namespace battleships::app {
             menu_manager.draw();
 
             _window.display();
+
+            if (auto const menu_id = menu_manager.get_if_pending_menu_change()) {
+
+                menu_manager.change_menu(menu_id.value());
+            }
 
             resource_manager.flush_unused();
         }
