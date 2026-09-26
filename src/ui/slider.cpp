@@ -292,10 +292,16 @@ void Slider::_update_handle_from_value() {
 
     sf::FloatRect const track = _get_track_bounds();
 
-    _rect_inside->setPosition(track.position);
+    float const track_border_thickness = _rect_outside->getOutlineThickness();
+
+    _rect_inside->setPosition({
+        track.position.x + track_border_thickness,
+        track.position.y + track_border_thickness
+        });
+
     _rect_inside->setSize({
-        track.size.x * ratio,
-        track.size.y
+        track.size.x * ratio - (track_border_thickness * 2u),
+        track.size.y - (track_border_thickness * 2u)
         });
 
     _handle->setPosition({

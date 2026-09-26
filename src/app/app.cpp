@@ -51,6 +51,13 @@ namespace battleships::app {
 
     void App::run_program() {
 
+        LOG_LVLS_ENABLED(
+            utils::Log_lvl::INFO |
+            utils::Log_lvl::DEBUG |
+            utils::Log_lvl::ERR |
+            utils::Log_lvl::WARN
+            );
+
         LOG(utils::Log_lvl::INFO) << "Program started.";
 
         auto& sfml_events_manager = events::SFML_event_manager::instance();

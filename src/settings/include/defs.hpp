@@ -74,10 +74,20 @@ inline constexpr char const* SETTINGS_FILE_PATH = "assets/data/settings.toml";
 
 inline Setting_key_entry const SETTING_KEYS[] = {
 
-    { "window_state", sf::State{} },
-    { "music_volume", float{} },
-    { "sfx_volume", float{} },
-    { "anti_aliasing", std::uint8_t{} }
+    { "audio_music_volume", float{} },
+    { "audio_sfx_volume", float{} },
+    { "audio_mute", bool{} },
+
+    { "video_window_mode", sf::State{} },
+    { "video_vsync", bool{} },
+    { "video_fps_cap", std::uint8_t{} },
+    { "video_show_fps_counter", bool{} },
+
+    { "keybinds_rotate_ship", sf::Keyboard::Key{} },
+    { "keybinds_fire", sf::Keyboard::Key{} },
+    { "keybinds_confirm", sf::Keyboard::Key{} },
+    { "keybinds_cancel", sf::Keyboard::Key{} },
+    { "keybinds_menu", sf::Keyboard::Key{} }
 };
 
 }
