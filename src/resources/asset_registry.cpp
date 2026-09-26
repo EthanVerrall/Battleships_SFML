@@ -121,6 +121,10 @@ namespace {
         Static_sheet_entry{ .name = "background_coast", .path = "assets/textures/backgrounds/coast.png", .regions = BACKGROUND_REGIONS },
         Static_sheet_entry{ .name = "background_storm", .path = "assets/textures/backgrounds/storm.png", .regions = BACKGROUND_REGIONS },
         Static_sheet_entry{ .name = "background_sunset", .path = "assets/textures/backgrounds/sunset.png", .regions = BACKGROUND_REGIONS },
+
+        Static_sheet_entry{ .name = "background_control_room_coast", .path = "assets/textures/backgrounds/control_room_coast.png", .regions = BACKGROUND_REGIONS },
+        Static_sheet_entry{ .name = "background_control_room_storm", .path = "assets/textures/backgrounds/control_room_storm.png", .regions = BACKGROUND_REGIONS },
+        Static_sheet_entry{ .name = "background_control_room_sunset", .path = "assets/textures/backgrounds/control_room_sunset.png", .regions = BACKGROUND_REGIONS }
     };
 
     // ------------------------------------------------------------------------
