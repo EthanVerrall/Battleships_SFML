@@ -16,34 +16,34 @@ namespace battleships::ui {
 // Class Label
 // ----------------------------------------------------------------------------    
 
-//--------------------------
-// Constructor / Destructor
-//--------------------------    
-Label::Label(
-    sf::RenderWindow& window,
-    const std::string_view widget_name
-    )
-    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
-    , _font_name("pixel_bold") 
-    , _is_visible(true)
-{   
-    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
-        _font = std::move(temp_font);
-        _text = std::make_unique<sf::Text>(*_font);
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
+    //--------------------------
+    // Constructor / Destructor
+    //--------------------------    
+    Label::Label(
+        sf::RenderWindow& window,
+        const std::string_view widget_name
+        )
+        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL})
+        , _font_name("pixel_bold") 
+        , _is_visible(true)
+    {   
+        if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
+            _font = std::move(temp_font);
+            _text = std::make_unique<sf::Text>(*_font);
+            LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
+        }
+        else {
+            LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for label " << widget_name;
+        }
     }
-    else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for label " << widget_name;
-    }
-}
 
-Label::Label(
-    sf::RenderWindow& window,
-    const std::string_view widget_name,
-    const std::string_view font_name,
-    const std::string_view text,
-    const unsigned int character_size
-    )
+    Label::Label(
+        sf::RenderWindow& window,
+        const std::string_view widget_name,
+        const std::string_view font_name,
+        const std::string_view text,
+        const unsigned int character_size
+        )
     : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
@@ -59,14 +59,14 @@ Label::Label(
     }
 }
 
-Label::Label(
-    sf::RenderWindow& window,
-    const std::string_view widget_name,
-    const std::string_view font_name,
-    const std::string_view text,
-    const unsigned int character_size,
-    const sf::Vector2f pos
-    )
+    Label::Label(
+        sf::RenderWindow& window,
+        const std::string_view widget_name,
+        const std::string_view font_name,
+        const std::string_view text,
+        const unsigned int character_size,
+        const sf::Vector2f pos
+        )
     : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
     , _font_name(font_name)
     , _is_visible(true)
@@ -84,9 +84,9 @@ Label::Label(
 }  
 
 
-//--------------------------
-// Class specific functions
-//--------------------------
+    //--------------------------
+    // Class specific functions
+    //--------------------------
     void Label::draw() {
 
         if (!_text || !_is_visible) {
@@ -98,9 +98,9 @@ Label::Label(
 
     void Label::update(float const dt) { static_cast<void> (dt); /*Does nothing*/ }
 
-//--------------------------
-// Getters
-//--------------------------
+    //--------------------------
+    // Getters
+    //--------------------------
     unsigned int Label::get_char_size() const {
 
         if (!_text) {
@@ -196,9 +196,9 @@ Label::Label(
     bool Label::get_visibility() const { return _is_visible; }
 
 
-//--------------------------
-// Setters
-//--------------------------    
+    //--------------------------
+    // Setters
+    //--------------------------    
     void Label::set_char_size(const unsigned int char_size) {
 
         if (!_text) {

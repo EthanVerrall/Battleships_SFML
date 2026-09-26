@@ -40,7 +40,6 @@ int main() {
         0u
         );
     
-
     // run the program as long as the window is open
     while (window.isOpen())
     {
