@@ -5,6 +5,7 @@
 #include "include/menu_manager.hpp"
 #include "events/include/game_event_manager.hpp"
 #include "menus/include/main_menu.hpp"
+#include "menus/include/options_menu.hpp"
 
 #include "SFML/Graphics.hpp"
 
@@ -103,6 +104,7 @@ std::unique_ptr<Menu> Menu_manager::_create_menu(
     switch (menu_id) {
 
         case Menu_id::MAIN_MENU: return std::make_unique<Main_menu>(_window);
+        case Menu_id::OPTIONS_MENU: return std::make_unique<Options_menu>(_window);
 
         default: return nullptr;
     }

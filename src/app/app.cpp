@@ -4,6 +4,7 @@
 
 #include "include/app.hpp"
 #include "utils/include/logger.hpp"
+#include "events/include/event_type.hpp"
 
 #include <cstdint>
 
@@ -55,6 +56,12 @@ namespace battleships::app {
         auto& sfml_events_manager = events::SFML_event_manager::instance();
         auto& resource_manager = resources::Resource_manager::instance();
         auto& menu_manager = menus::Menu_manager::instance(_window);
+
+        sfml_events_manager.register_callback(
+            events::SFML_event_type::KEYRELEASE_ESCAPE,
+            [this](events::SFML_event_data const&) { _window.close(); },
+            0
+            );
 
         while (_window.isOpen()){
 

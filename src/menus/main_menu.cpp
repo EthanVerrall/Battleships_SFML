@@ -17,12 +17,11 @@
 
 using namespace battleships::ui;
 using namespace battleships::utils;
-using namespace battleships::utils;
 
 namespace battleships::menus {
 
 // ============================================================================
-// Class Label
+// Class Main_menu
 // ----------------------------------------------------------------------------
 
     //--------------------------
@@ -148,6 +147,12 @@ namespace battleships::menus {
             _options_btn->set_on_exit_hover([&]()
                 {
                     _options_btn->set_text_color(utils::colors::DEFAULT_TEXT);
+                }
+            );
+
+            _options_btn->set_on_left_click([&]()
+                {
+                    _emit_event___pending_menu_change(Menu_id::OPTIONS_MENU);
                 }
             );
 
