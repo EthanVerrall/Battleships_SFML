@@ -23,7 +23,7 @@ namespace battleships::app {
     App::App()
     {
         settings::Settings_manager::instance().load();
-        LOG(utils::Log_lvl::TRACE) << "Render window created.";
+        create_render_window();
     }
 
     //--------------------------
@@ -44,6 +44,8 @@ namespace battleships::app {
             startup_state,
             startup_context_settings
         );
+
+        LOG(utils::Log_lvl::TRACE) << "Render window created.";
     }
 
     void App::run_program() {
