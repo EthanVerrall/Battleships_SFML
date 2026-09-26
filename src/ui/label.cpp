@@ -44,20 +44,20 @@ namespace battleships::ui {
         const std::string_view text,
         const unsigned int character_size
         )
-    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
-    , _font_name(font_name)
-    , _is_visible(true)
-{   
-    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
-        _font = std::move(temp_font);
-        _text = std::make_unique<sf::Text>(*_font, text, character_size);
+        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+        , _font_name(font_name)
+        , _is_visible(true)
+    {   
+        if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
+            _font = std::move(temp_font);
+            _text = std::make_unique<sf::Text>(*_font, text, character_size);
 
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
+            LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
+        }
+        else {
+            LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
+        }
     }
-    else {
-        LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
-    }
-}
 
     Label::Label(
         sf::RenderWindow& window,
@@ -67,21 +67,21 @@ namespace battleships::ui {
         const unsigned int character_size,
         const sf::Vector2f pos
         )
-    : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
-    , _font_name(font_name)
-    , _is_visible(true)
-{   
-    if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
-        _font = std::move(temp_font);
-        _text = std::make_unique<sf::Text>(*_font, text, character_size);
-        set_pos(pos);
+        : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::LABEL}) 
+        , _font_name(font_name)
+        , _is_visible(true)
+    {   
+        if (const auto temp_font = resources::Asset_registry::load_font(_font_name)) {
+            _font = std::move(temp_font);
+            _text = std::make_unique<sf::Text>(*_font, text, character_size);
+            set_pos(pos);
 
-        LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
-    }
-    else {
+            LOG(utils::Log_lvl::TRACE) << "Created label " << widget_name;
+        }
+        else {
         LOG(utils::Log_lvl::WARN) << "Failed to load font " << font_name << " for label " << widget_name;
-    }
-}  
+        }
+    }  
 
 
     //--------------------------

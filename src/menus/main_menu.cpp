@@ -28,7 +28,7 @@ namespace battleships::menus {
     //--------------------------
     // Constructor / Destructor
     //-------------------------- 
-    Main_menu::Main_menu(sf::RenderWindow& window) : Menu::Menu(window) 
+    Main_menu::Main_menu(sf::RenderWindow& window) : Menu(window) 
     {   
         build_background_image();
         build_title_lbl();
