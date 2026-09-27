@@ -25,7 +25,8 @@ enum class Widget_type {
     TEXT_AREA,
     SLIDER,
     CHECKBOX,
-    SPINBOX
+    SPINBOX,
+    HOTKEY_RECORDER
 };
 
 // ============================================================================
