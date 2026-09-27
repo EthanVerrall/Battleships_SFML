@@ -22,10 +22,10 @@
 namespace battleships::ui {
 
 // ============================================================================
-// Class Button
+// Class Checkbox
 // ----------------------------------------------------------------------------
 
-class Button
+class Checkbox
     : public Widget
     , public battleships::events::Event_listener
     {
@@ -35,14 +35,14 @@ class Button
     //--------------------------
 public:
 
-    Button(sf::RenderWindow& window, std::string_view const name);
+    Checkbox(sf::RenderWindow& window, std::string_view const name);
 
-    ~Button();
+    ~Checkbox();
 
-    Button(Button const&) = delete;
-    Button& operator=(Button const&) = delete;
-    Button(Button&&) = delete;
-    Button& operator=(Button&&) = delete;
+    Checkbox(Checkbox const&) = delete;
+    Checkbox& operator=(Checkbox const&) = delete;
+    Checkbox(Checkbox&&) = delete;
+    Checkbox& operator=(Checkbox&&) = delete;
 
     //--------------------------
     // Class specific functions
@@ -57,6 +57,11 @@ public:
 
 private:
 
+    void _create__rect();
+    void _create__checkmark();
+
+    void _update_checkmark_pos();
+
     void _register_events();
 
     void _handle_event__mouse_button_left_release();
@@ -68,6 +73,7 @@ private:
         HOVERING = 1 << 0,
         DISABLED = 1 << 1,
         HIDDEN   = 1 << 2,
+        CHECKED  = 1 << 3,
 
         DEFAULT = NONE
     }; std::uint8_t _state;
@@ -85,17 +91,22 @@ public:
 
     sf::Vector2f get_size() const override;
 
-    sf::Vector2f get_bounds_pos() const;
-
     sf::Vector2f get_scale() const override;
 
-    sf::Angle get_rotation() const;
+    sf::Color get_color() const;
 
-    std::string_view get_text_str() const;
+    Widget_border get_border() const;
+
+    sf::Color get_checkmark_color() const;
+
+    sf::Vector2f get_checkmark_size() const;
+
+    Widget_border get_checkmark_border() const;
 
     bool is_enabled() const;
     bool is_hovering() const;
     bool is_visible() const;
+    bool is_checked() const;
 
     //--------------------------
     // Setters
@@ -104,27 +115,22 @@ public:
 
     void set_pos(sf::Vector2f const pos) override;
 
-    void set_bounds_pos(sf::Vector2f const pos);
-
     void set_size(sf::Vector2f const size) override;
 
     void set_scale(sf::Vector2f const scale) override;
 
-    void set_rotation(sf::Angle const angle);
+    void set_color(sf::Color const color);
 
-    void set_on_left_click(std::function<void()> call_back);
+    void set_border(Widget_border const border);
+
+    void set_checkmark_color(sf::Color const color);
+
+    void set_checkmark_size(sf::Vector2f const size);
+
+    void set_checkmark_border(Widget_border const border);
+
     void set_on_hover(std::function<void()> call_back);
     void set_on_exit_hover(std::function<void()> call_back);
-
-    void set_font(std::string_view const font_name);
-
-    void set_text(std::string_view const text);
-
-    void set_text_color(sf::Color const color);
-
-    void set_text_border(Widget_border const border);
-
-    void set_text_char_size(std::size_t const size);
 
     void set_visible(bool const visible);
 
@@ -132,11 +138,10 @@ public:
     // Attributes
     //--------------------------
 private:
+    std::unique_ptr<sf::RectangleShape> _rect;
+    std::unique_ptr<sf::RectangleShape> _checkmark_piece_left;
+    std::unique_ptr<sf::RectangleShape> _checkmark_piece_right;
 
-    std::unique_ptr<sf::Text> _text;
-    std::shared_ptr<sf::Font> _font;
-
-    std::function<void()> _on_left_click;
     std::function<void()> _on_hover;
     std::function<void()> _on_exit_hover;
 };

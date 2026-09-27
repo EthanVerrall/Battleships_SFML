@@ -23,7 +23,10 @@ enum class Widget_type {
     LABEL,
     BUTTON,
     TEXT_AREA,
-    SLIDER
+    SLIDER,
+    CHECKBOX,
+    SPINBOX,
+    HOTKEY_RECORDER
 };
 
 // ============================================================================
