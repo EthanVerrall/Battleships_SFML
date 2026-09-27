@@ -85,7 +85,11 @@ public:
 
     sf::Vector2f get_size() const override;
 
+    sf::Vector2f get_bounds_pos() const;
+
     sf::Vector2f get_scale() const override;
+
+    sf::Angle get_rotation() const;
 
     std::string_view get_text_str() const;
 
@@ -100,9 +104,13 @@ public:
 
     void set_pos(sf::Vector2f const pos) override;
 
+    void set_bounds_pos(sf::Vector2f const pos);
+
     void set_size(sf::Vector2f const size) override;
 
     void set_scale(sf::Vector2f const scale) override;
+
+    void set_rotation(sf::Angle const angle);
 
     void set_on_left_click(std::function<void()> call_back);
     void set_on_hover(std::function<void()> call_back);
