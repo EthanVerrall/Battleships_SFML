@@ -219,6 +219,19 @@ sf::Vector2f Button::get_size() const {
 }
 
 // ----------------------------------------------------------------------------
+sf::Vector2f Button::get_bounds_pos() const {
+
+    if (_text == nullptr) {
+
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't get bounds pos.";
+
+        return {};
+    }
+
+    return _text->getGlobalBounds().position;
+}
+
+// ----------------------------------------------------------------------------
 sf::Vector2f Button::get_scale() const {
 
     if (_text == nullptr) {
@@ -229,6 +242,19 @@ sf::Vector2f Button::get_scale() const {
     }
 
     return _text->getScale();
+}
+
+// ----------------------------------------------------------------------------
+sf::Angle Button::get_rotation() const {
+
+    if (_text == nullptr) {
+
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't get rotation.";
+
+        return {};
+    }
+
+    return _text->getRotation();
 }
 
 // ----------------------------------------------------------------------------
@@ -288,6 +314,22 @@ void Button::set_pos(
 }
 
 // ----------------------------------------------------------------------------
+void Button::set_bounds_pos(
+    sf::Vector2f const pos
+    ) {
+
+    if (_text == nullptr) {
+
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set bounds pos.";
+    } else {
+
+        sf::Vector2f const pen_to_bounds = _text->getGlobalBounds().position - _text->getPosition();
+
+        _text->setPosition(pos - pen_to_bounds);
+    }
+}
+
+// ----------------------------------------------------------------------------
 void Button::set_size(
     sf::Vector2f const size
     ) {
@@ -310,6 +352,23 @@ void Button::set_scale(
         << scale.x << ", " << scale.y << ')';
 
         _text->setScale(scale);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void Button::set_rotation(
+    sf::Angle const angle
+    ) {
+
+    if (_text == nullptr) {
+
+        LOG(Log_lvl::WARN) << _data.name << ": _text == nullptr, can't set rotation.";
+    } else {
+
+        LOG(Log_lvl::TRACE) << _data.name << ": set_rotation from " << _text->getRotation().asDegrees()
+        << " to " << angle.asDegrees();
+
+        _text->setRotation(angle);
     }
 }
 
