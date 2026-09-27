@@ -100,9 +100,9 @@ public:
     //--------------------------
 private:
 
-    std::unique_ptr<sf::Text> _text;
-    std::shared_ptr<sf::Font> _font;
     std::string_view _font_name;
+    std::shared_ptr<sf::Font> _font;
+    std::unique_ptr<sf::Text> _text;
     bool _is_visible;
 };
 

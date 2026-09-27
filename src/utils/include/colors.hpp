@@ -28,6 +28,10 @@ inline constexpr sf::Color HEADING_TEXT(sf::Color::Red);
 //Buttons
 inline constexpr sf::Color BUTTON_TEXT_HOVER(sf::Color::Yellow);
 
+//Text Area
+inline constexpr sf::Color TEXT_AREA_RECT(sf::Color::Blue);
+inline constexpr sf::Color TEXT_AREA_SCROLL_BAR(sf::Color::Green);
+
 }
 
 }
