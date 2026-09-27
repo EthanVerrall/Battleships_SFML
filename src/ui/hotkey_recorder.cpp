@@ -7,30 +7,7 @@
 #include "events/include/sfml_event_manager.hpp"
 #include "utils/include/logger.hpp"
 #include "utils/include/colors.hpp"
-
-// ============================================================================
-// Macros
-// ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-#define NULL_CHECK(obj)                           \
-    if ((obj) == nullptr) {                       \
-                                                  \
-        LOG(Log_lvl::WARN) <<  _data.name << ": " \
-        << #obj << " == nullptr";                 \
-                                                  \
-        return {};                                \
-    }
-
-// ----------------------------------------------------------------------------
-#define NULL_CHECK_VOID(obj)                      \
-    if ((obj) == nullptr) {                       \
-                                                  \
-        LOG(Log_lvl::WARN) <<  _data.name << ": " \
-        << #obj << " == nullptr";                 \
-                                                  \
-        return;                                   \
-    }
+#include "utils/include/null_check.hpp"
 
 // ============================================================================
 // Namespaces
