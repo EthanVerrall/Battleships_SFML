@@ -5,13 +5,14 @@
 // ----------------------------------------------------------------------------
 
 #include "ui/include/widget.hpp"
+#include "ui/include/button.hpp"
+#include "events/include/event_listener.hpp"
 
 #include "SFML/Graphics.hpp"
 
 #include <cstdint>
 #include <string_view>
 #include <memory>
-
 
 // ============================================================================
 // Namespaces
@@ -23,7 +24,10 @@ namespace battleships::ui {
 // Class text_area
 // ----------------------------------------------------------------------------
 
-class Text_area : public Widget  {
+class Text_area
+    : public Widget
+    , public events::Event_listener
+    {
 
     //--------------------------
     // Constructor / Destructor
@@ -56,15 +60,24 @@ public:
 private:
 
     enum State : std::uint8_t {
-        NONE        = 0,
-        HIDDEN      = 1 << 0,
-        HOVERING    = 1 << 1,
-        FOCUS       = 1 << 2,
-        DISABLED    = 1 << 3,
-        SCROLLABLE  = 1 << 4,
+        NONE            = 0,
+        HIDDEN          = 1 << 0,
+        HOVERING_RECT   = 1 << 1, //Not implemented //Is your mouse hovering over the text area where the box is
+        FOCUSED         = 1 << 2, //Not implemented //Are you currently in typing mode
+        DISABLED        = 1 << 3, //Not implemented //Are you able to type in it
+        SCROLLABLE      = 1 << 4,
+        HOVERING_BAR    = 1 << 5,
+        DRAGGING        = 1 << 6,
 
         DEFAULT = NONE
     }; std::uint8_t _state;
+
+    //Overloading the | operator to allow chaining states
+    friend inline State operator|(State a, State b) {
+        return static_cast<State>(
+            static_cast<std::uint8_t> (a) | static_cast<std::uint8_t> (b)
+        );
+    }
 
     void set_state(const State state);
     void add_state(const State state);
@@ -76,47 +89,99 @@ private:
     //--------------------------
 public:
 
+    //Positioning and sizing
     sf::Vector2f get_pos() const;
     sf::Vector2f get_size() const;
-    sf::Vector2f get_scale() const;
+    sf::Vector2f get_scale() const; //Not implemented
 
     //Rect functions
     sf::Color get_rect_color() const;
+    float get_box_width() const;
+    float get_box_height() const;
 
     //Scroll functions
-    float get_scroll_bar_width() const;
+    float get_scoll_bar_width() const;
+    sf::Color get_scroll_bar_bg_color() const;
     sf::Color get_scroll_bar_color() const;
     bool is_scrollable() const;
+
+    //Other functionality
+    bool is_visible() const;
 
     //--------------------------
     // Setters
     //--------------------------
 public:
 
+    //Positioning and sizing
+
+    /*
+    This function set the position of your text_area to its top left most point
+    The scroll bar will automatically be moved along and attached to the far right.
+    */
     void set_pos(const sf::Vector2f pos);
+
+    /*
+    This function will adjust the box area size of the text_area widget.
+    This is the space where text will be contained in and written to.
+    This function will not adjust the width of the scroll bar and does not account for it.
+    */
     void set_size(const sf::Vector2f size);
+
+    //Not implemented
     void set_scale(const sf::Vector2f scale);
 
     //Rect functions
     void set_rect_color(const sf::Color color);
+    void set_box_width(const float width);
+    void set_box_height(const float height);
 
     //Scroll functions
     void set_scroll_bar_width(const float width);
-    void set_scroll_bar_color(const sf::Color color);
+    void set_scroll_bar_bg_color(const sf::Color color); //Color for behind the bar
+    void set_scroll_bar_color(const sf::Color color); //Color for the scrollbar
     void set_scrollable(const bool flag);
+
+    //Other functionality
+    void set_visible(const bool flag);
+
+    //--------------------------
+    // Private functions
+    //--------------------------
+private:
+
+    void reposition_scroll_bar();
+    void resize_scroll_bar();
+    void register_events();
+
+    void _handle_event__mouse_moved();
+
+    void _handle_event__mouse_button_left_held();
+    void scrolling(const sf::Vector2f mouse_pos);
 
     //--------------------------
     // Attributes
     //--------------------------
 private:
 
+    // Area the user types in, _rect is where the text displays,
     std::unique_ptr<sf::RectangleShape> _rect;
-    std::unique_ptr<sf::RectangleShape> _scroll_bar;
+    // The _caret is the blinking cursor.
     std::unique_ptr<sf::RectangleShape> _caret;
+
+    // All the different pieces of the scroll bar
+    std::unique_ptr<sf::RectangleShape> _bar_background;
+    std::unique_ptr<sf::RectangleShape> _scroll_bar;
+    std::unique_ptr<Button> _up_arrow;                  //Not implemented yet
+    std::unique_ptr<Button> _down_arrow;                //Not implemented yet
+
+    //Used for scroll bar, recording old mouse position
+    sf::Vector2f _old_mouse_pos;
+
+    // Font details
     std::string_view _font_name;
     std::shared_ptr<sf::Font> _font;
     std::unique_ptr<sf::Text> _text;
-
 };
 
 }

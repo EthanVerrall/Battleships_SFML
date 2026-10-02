@@ -38,7 +38,6 @@ namespace battleships::menus {
         build_exit_btn();
     }
 
-
     //--------------------------
     // Class builder functions
     //--------------------------
