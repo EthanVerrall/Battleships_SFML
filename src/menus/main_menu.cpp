@@ -286,8 +286,11 @@ namespace battleships::menus {
         if (_exit_btn) {_exit_btn->draw(); }
     }
 
-    void Main_menu::update(float const dt) { static_cast<void> (dt); /*Not implemented*/ };
-
+    /*Not implemented*/
+    void Main_menu::update(float const dt) {
+        static_cast<void> (dt);
+        LOG(utils::Log_lvl::WARN) << "Attempting to use unimplemented function.";
+    };
 
     //--------------------------
     // Getters
@@ -298,5 +301,4 @@ namespace battleships::menus {
         const sf::Vector2f window_mp {window_size.x / 2.0f, window_size.y / 2.0f };
         return window_mp;
     }
-
 }

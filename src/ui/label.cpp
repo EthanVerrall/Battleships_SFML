@@ -4,12 +4,14 @@
 
 #include "include/label.hpp"
 #include "utils/include/logger.hpp"
+#include "utils/include/null_check.hpp"
 #include "resources/include/asset_registry.hpp"
 
 // ============================================================================
 // Namespaces
 // ----------------------------------------------------------------------------
 
+using namespace battleships::utils;
 namespace battleships::ui {
 
 // ============================================================================
@@ -103,94 +105,57 @@ namespace battleships::ui {
     //--------------------------
     unsigned int Label::get_char_size() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get char size.";
-            return 0;
-        }
-        else {
-            return _text->getCharacterSize();
-        }
+        NULL_CHECK(_text)
+        return _text->getCharacterSize();
+
     }
 
     sf::Vector2f Label::get_size() const {
 
-         if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get size.";
-            return sf::Vector2f {0.0f , 0.0f};
-        }
-        else {
-            return _text->getGlobalBounds().size;
-        }
+        NULL_CHECK(_text)
+        return _text->getGlobalBounds().size;
     }
 
     sf::Vector2f Label::get_scale() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.";
-            return sf::Vector2f {0.0f , 0.0f};
-        }
-        else {
-            return _text->getScale();
-        }
+        NULL_CHECK(_text)
+        return _text->getScale();
     }
 
     sf::Vector2f Label::get_pos() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get position.";
-            return sf::Vector2f {0.0f , 0.0f};
-        }
-        else {
-            return _text->getPosition();
-        }
+        NULL_CHECK(_text)
+        return _text->getPosition();
     }
 
     std::string_view Label::get_text() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't get scaling size.";
-            return "";
-        }
-        else {
-            return _text->getString().toAnsiString();
-        }
+        NULL_CHECK(_text)
+        return _text->getString().toAnsiString();
     }
 
     std::string_view Label::get_font_name() const {
 
-        if (!_font || !_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " font or text is nullptr. Can't find a font to return.";
-            return "";
-        }
-        else {
-            return _font_name;
-        }
+        NULL_CHECK(_font)
+        NULL_CHECK(_text)
+        return _font_name;
     }
 
     sf::Color Label::get_text_color() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default color returned.";
-            return utils::colors::DEFAULT_TEXT;
-        }
-        else {
-            return _text->getFillColor();
-        }
+        NULL_CHECK(_text)
+        return _text->getFillColor();
     }
 
     Widget_border Label::get_border() const {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, default border returned.";
-            return Widget_border {.color = utils::colors::DEFAULT_BORDER , .size = 0.0f };
-        }
-        else {
-            Widget_border border_data {
-                .color = _text->getOutlineColor() ,
-                .size = _text->getOutlineThickness()
-            };
-            return border_data;
-        }
+        NULL_CHECK(_text)
+        Widget_border border_data
+        {
+            .color = _text->getOutlineColor() ,
+            .size = _text->getOutlineThickness()
+        };
+        return border_data;
     }
 
     bool Label::get_visibility() const { return _is_visible; }
@@ -201,12 +166,8 @@ namespace battleships::ui {
     //--------------------------
     void Label::set_char_size(const unsigned int char_size) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set char size.";
-        }
-        else {
-            _text->setCharacterSize(char_size);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setCharacterSize(char_size);
     }
 
     void Label::set_size(const sf::Vector2f size) {
@@ -217,71 +178,47 @@ namespace battleships::ui {
 
     void Label::set_scale(sf::Vector2f const scale) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set scaling.";
-        }
-        else {
-            _text->setScale(scale);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setScale(scale);
     }
 
     void Label::set_pos(sf::Vector2f const pos) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set pos.";
-        }
-        else {
-            _text->setPosition(pos);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setPosition(pos);
     }
 
     void Label::set_text(const std::string_view text) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " is nullptr, can't set text.";
-        }
-        else {
-            _text->setString(text);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setString(text);
     }
 
     void Label::set_font(const std::string_view font_name) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set font.";
+        NULL_CHECK_VOID(_text)
+
+        if (const auto temp_font = resources::Asset_registry::load_font(font_name)) {
+            _font = std::move(temp_font);
+            _text->setFont(*_font);
+            _font_name = font_name;
         }
         else {
-
-            if (const auto temp_font = resources::Asset_registry::load_font(font_name)) {
-                _font = std::move(temp_font);
-                _text->setFont(*_font);
-                _font_name = font_name;
-            }
-            else {
-                LOG(utils::Log_lvl::WARN) << "failed to change font for " << _data.name << ", font was nullptr.";
-            }
+            LOG(utils::Log_lvl::WARN) << "failed to change font for " << _data.name << ", font was nullptr.";
         }
     }
 
     void Label::set_text_color(const sf::Color color) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set color.";
-        }
-        else {
-            _text->setFillColor(color);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setFillColor(color);
     }
 
     void Label::set_border(const Widget_border border) {
 
-        if (!_text) {
-            LOG(utils::Log_lvl::WARN) << _data.name << " text is nullptr, can't set border.";
-        }
-        else {
-            _text->setOutlineColor(border.color);
-            _text->setOutlineThickness(border.size);
-        }
+        NULL_CHECK_VOID(_text)
+        _text->setOutlineColor(border.color);
+        _text->setOutlineThickness(border.size);
     }
 
     void Label::set_visible(const bool flag) { _is_visible = flag; }
