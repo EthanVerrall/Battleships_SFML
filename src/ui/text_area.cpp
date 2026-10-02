@@ -358,14 +358,28 @@ namespace battleships::ui {
         const auto mouse_pixel_coords { sf::Mouse::getPosition(_window) };
         const auto mouse_pos { _window.mapPixelToCoords(mouse_pixel_coords) };
 
+        //If we are currently dragging the scrollbar we can be less strict on staying in bounds
+        //This should remove frustration and make scrolling more pleasant
+        if (has_state(State::DRAGGING)) {
+            const sf::Vector2f bar_pos { _bar_background->getPosition() };
+            const sf::Vector2f bar_size { _bar_background->getSize() };
+
+            const float min_lenience { bar_pos.x  - 50.0f };
+            const float max_lenience { bar_pos.x + bar_size.x + 50.0f };
+
+            if ( !( mouse_pos.x >= min_lenience && mouse_pos.x <= max_lenience) ) {
+                remove_state(State::HOVERING_BAR);
+            }
+        }
         //Checking if we are hovering the scroll bar
-        if (_scroll_bar->getGlobalBounds().contains(mouse_pos)) {
+        else if (_scroll_bar->getGlobalBounds().contains(mouse_pos)) {
             add_state(State::HOVERING_BAR);
         }
         else { remove_state(State::HOVERING_BAR); }
 
         //Checking if we are hovering the _rect -- Area the user types text into
-        if (_rect->getGlobalBounds().contains(mouse_pos)) {
+        //User will not be able to enter text if they are currently dragging the scrollbar
+        if (_rect->getGlobalBounds().contains(mouse_pos) && !has_state(State::DRAGGING)) {
             add_state(State::HOVERING_RECT);
         }
         else { remove_state(State::HOVERING_RECT); }
@@ -378,9 +392,9 @@ namespace battleships::ui {
         const auto mouse_pos { _window.mapPixelToCoords(mouse_pixel_coords) };
 
         if (has_state(State::HOVERING_BAR | State::SCROLLABLE) && !has_state(State::DRAGGING)) {
-            add_state(State::DRAGGING);
             //First frame we will just remember where the mouse was,
             //frames fire so fast the user should not even notice a delay until next frame.
+            add_state(State::DRAGGING);
             _old_mouse_pos = mouse_pos;
         }
         else if (has_state(State::HOVERING_BAR | State::SCROLLABLE | State::DRAGGING)) {

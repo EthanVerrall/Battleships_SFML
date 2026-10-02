@@ -116,7 +116,7 @@ public:
     //Positioning and sizing
 
     /*
-    This function set the position of your text_area to its top left most point
+    This function sets the position of your text_area to its top left most point
     The scroll bar will automatically be moved along and attached to the far right.
     */
     void set_pos(const sf::Vector2f pos);
