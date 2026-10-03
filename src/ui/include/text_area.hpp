@@ -60,14 +60,14 @@ public:
 private:
 
     enum State : std::uint8_t {
-        NONE            = 0,
-        HIDDEN          = 1 << 0,
-        HOVERING_RECT   = 1 << 1, //Not implemented //Is your mouse hovering over the text area where the box is
-        FOCUSED         = 1 << 2, //Not implemented //Are you currently in typing mode
-        DISABLED        = 1 << 3, //Not implemented //Are you able to type in it
-        SCROLLABLE      = 1 << 4,
-        HOVERING_BAR    = 1 << 5,
-        DRAGGING        = 1 << 6,
+        NONE                    = 0,
+        HIDDEN                  = 1 << 0,
+        HOVERING_CONTENT_AREA   = 1 << 1, //Not implemented //Is your mouse hovering over the text area where the box is
+        FOCUSED                 = 1 << 2, //Not implemented //Are you currently in typing mode
+        DISABLED                = 1 << 3, //Not implemented //Are you able to type in it
+        SCROLLABLE              = 1 << 4,
+        HOVERING_BAR            = 1 << 5,
+        DRAGGING                = 1 << 6,
 
         DEFAULT = NONE
     }; std::uint8_t _state;
@@ -91,18 +91,17 @@ public:
 
     //Positioning and sizing
     sf::Vector2f get_pos() const;
-    sf::Vector2f get_size() const;
-    sf::Vector2f get_scale() const; //Not implemented
+    sf::Vector2f get_size() const; // This returns the total size of the text area, includes the scrollbar dimensions
+    sf::Vector2f get_scale() const; // Not implemented
 
     //Rect functions
-    sf::Color get_rect_color() const;
-    float get_box_width() const;
-    float get_box_height() const;
+    sf::Color get_content_area_color() const;
+    sf::Vector2f get_content_area_size() const; // This returns the size of the typing zone for your text area
 
     //Scroll functions
     float get_scoll_bar_width() const;
-    sf::Color get_scroll_bar_bg_color() const;
-    sf::Color get_scroll_bar_color() const;
+    sf::Color get_scroll_bar_bg_color() const; // Color for behind the bar
+    sf::Color get_scroll_bar_color() const; // Color for the scrollbar
     bool is_scrollable() const;
 
     //Other functionality
@@ -122,9 +121,13 @@ public:
     void set_pos(const sf::Vector2f pos);
 
     /*
-    This function will adjust the box area size of the text_area widget.
+    This function will adjust the content area size.
     This is the space where text will be contained in and written to.
-    This function will not adjust the width of the scroll bar and does not account for it.
+    This function will not adjust the width of the scroll bar.
+    Will automatically move the scroll bar to the far right of the new provided size.
+
+    Example: if your size is { 400.0f, 200.0f } your scroll bar will start from 400.0f ->
+    and attach to the right by its width
     */
     void set_size(const sf::Vector2f size);
 
@@ -132,9 +135,9 @@ public:
     void set_scale(const sf::Vector2f scale);
 
     //Rect functions
-    void set_rect_color(const sf::Color color);
-    void set_box_width(const float width);
-    void set_box_height(const float height);
+    void set_content_area_color(const sf::Color color);
+    void set_content_area_width(const float width);
+    void set_content_area_height(const float height);
 
     //Scroll functions
     void set_scroll_bar_width(const float width);
@@ -159,13 +162,15 @@ private:
     void _handle_event__mouse_button_left_held();
     void scrolling(const sf::Vector2f mouse_pos);
 
+    void _handle_event__mouse_button_left_release();
+
     //--------------------------
     // Attributes
     //--------------------------
 private:
 
-    // Area the user types in, _rect is where the text displays,
-    std::unique_ptr<sf::RectangleShape> _rect;
+    // Area the user types in, _content_area is where the text displays,
+    std::unique_ptr<sf::RectangleShape> _content_area;
     // The _caret is the blinking cursor.
     std::unique_ptr<sf::RectangleShape> _caret;
 

@@ -30,7 +30,7 @@ namespace battleships::ui {
         )
         : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::TEXT_AREA})
         , _state(State::DEFAULT)
-        , _rect(std::make_unique<sf::RectangleShape>())
+        , _content_area(std::make_unique<sf::RectangleShape>())
         , _caret(std::make_unique<sf::RectangleShape>())
         , _bar_background(std::make_unique<sf::RectangleShape>())
         , _scroll_bar(std::make_unique<sf::RectangleShape>())
@@ -58,12 +58,12 @@ namespace battleships::ui {
     // WIP !!!
     void Text_area::draw() {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
         NULL_CHECK_VOID(_bar_background)
         NULL_CHECK_VOID(_scroll_bar)
 
         if (!has_state(State::HIDDEN)) {
-            _window.draw(*_rect);
+            _window.draw(*_content_area);
             if (has_state(State::SCROLLABLE)) { _window.draw(*_bar_background); }
             if (has_state(State::SCROLLABLE)) { _window.draw(*_scroll_bar); }
         }
@@ -91,14 +91,14 @@ namespace battleships::ui {
     //--------------------------
     sf::Vector2f Text_area::get_pos() const {
 
-        NULL_CHECK(_rect)
-        return _rect->getPosition();
+        NULL_CHECK(_content_area)
+        return _content_area->getPosition();
     }
 
     sf::Vector2f Text_area::get_size() const {
 
-        NULL_CHECK(_rect)
-        sf::Vector2f total_size { _rect->getSize() };
+        NULL_CHECK(_content_area)
+        sf::Vector2f total_size { _content_area->getSize() };
         total_size.x += get_scoll_bar_width();
         return total_size;
     }
@@ -109,29 +109,21 @@ namespace battleships::ui {
         return {};
     }
 
-    sf::Color Text_area::get_rect_color() const {
+    sf::Color Text_area::get_content_area_color() const {
 
-        NULL_CHECK(_rect)
-        return _rect->getFillColor();
+        NULL_CHECK(_content_area)
+        return _content_area->getFillColor();
     }
 
-    float Text_area::get_box_width() const {
+    sf::Vector2f Text_area::get_content_area_size() const {
 
-        NULL_CHECK(_rect)
-        return _rect->getSize().x;
-    }
-
-    float Text_area::get_box_height() const {
-
-        NULL_CHECK(_rect)
-        return _rect->getSize().y;
+        NULL_CHECK(_content_area)
+        return _content_area->getSize();
     }
 
     float Text_area::get_scoll_bar_width() const {
 
         NULL_CHECK(_bar_background)
-        NULL_CHECK(_scroll_bar)
-
         return _bar_background->getSize().x;
     }
 
@@ -166,10 +158,10 @@ namespace battleships::ui {
     //Arrows not added yet !!!
     void Text_area::set_pos(sf::Vector2f const pos) {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
 
         //Set the typing text area position
-        _rect->setPosition(pos);
+        _content_area->setPosition(pos);
         reposition_scroll_bar();
 
         resize_scroll_bar(); //This function will be deleted from here later
@@ -178,10 +170,10 @@ namespace battleships::ui {
 
     void Text_area::set_size(sf::Vector2f const size) {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
         NULL_CHECK_VOID(_bar_background)
 
-        _rect->setSize(size);
+        _content_area->setSize(size);
 
         sf::Vector2f bg_bar_size { _bar_background->getSize() };
         bg_bar_size.y = size.y;
@@ -196,29 +188,35 @@ namespace battleships::ui {
 
     void Text_area::set_scale(sf::Vector2f const scale) { static_cast<void> (scale); } //Not implemented
 
-    void Text_area::set_rect_color(const sf::Color color) {
+    void Text_area::set_content_area_color(const sf::Color color) {
 
-        NULL_CHECK_VOID(_rect)
-        _rect->setFillColor(color);
+        NULL_CHECK_VOID(_content_area)
+        _content_area->setFillColor(color);
     }
 
-    void Text_area::set_box_width(const float width) {
+    void Text_area::set_content_area_width(const float width) {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
 
-        sf::Vector2f new_size { _rect->getSize() };
+        sf::Vector2f new_size { _content_area->getSize() };
         new_size.x = width;
-        _rect->setSize(new_size);
+        _content_area->setSize(new_size);
         reposition_scroll_bar();
     }
 
-    void Text_area::set_box_height(const float height) {
+    void Text_area::set_content_area_height(const float height) {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
+        NULL_CHECK_VOID(_bar_background)
 
-        sf::Vector2f new_size { _rect->getSize() };
+        sf::Vector2f new_size { _content_area->getSize() };
         new_size.y = height;
-        _rect->setSize(new_size);
+        _content_area->setSize(new_size);
+
+        new_size = _bar_background->getSize();
+        new_size.y = height;
+        _bar_background->setSize(new_size);
+
         reposition_scroll_bar();
     }
 
@@ -269,12 +267,12 @@ namespace battleships::ui {
     //--------------------------
     void Text_area::reposition_scroll_bar() {
 
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
         NULL_CHECK_VOID(_bar_background)
         NULL_CHECK_VOID(_scroll_bar)
 
-        const sf::Vector2f rect_pos { _rect->getPosition() };
-        const sf::Vector2f rect_size { _rect->getSize() };
+        const sf::Vector2f rect_pos { _content_area->getPosition() };
+        const sf::Vector2f rect_size { _content_area->getSize() };
         const sf::Vector2f bar_pos { rect_pos.x + rect_size.x, rect_pos.y };
 
         //Clipping the bg_bar to the right of the text_area
@@ -308,7 +306,7 @@ namespace battleships::ui {
         final_pos.y += displacement;
 
         const float min_height_y { _bar_background->getPosition().y };
-        const float max_height_y { min_height_y + get_box_height() };
+        const float max_height_y { min_height_y + get_content_area_size().y };
         const sf::Vector2f min_height_vect { _bar_background->getPosition() };
         sf::Vector2f max_height_vect { _bar_background->getPosition() };
         max_height_vect.y = max_height_y;
@@ -326,7 +324,6 @@ namespace battleships::ui {
         }
 
         _scroll_bar->setPosition(final_pos);
-        _old_mouse_pos = mouse_pos;
     }
 
     void Text_area::register_events() {
@@ -348,12 +345,20 @@ namespace battleships::ui {
             },
             listener_id()
         );
+
+        event_manager.register_callback(
+            events::SFML_event_type::MOUSE_BUTTON_LEFT_RELEASE,
+            [this](events::SFML_event_data const&) {
+                _handle_event__mouse_button_left_release();
+            },
+            listener_id()
+        );
     }
 
     void Text_area::_handle_event__mouse_moved() {
 
         NULL_CHECK_VOID(_scroll_bar)
-        NULL_CHECK_VOID(_rect)
+        NULL_CHECK_VOID(_content_area)
 
         const auto mouse_pixel_coords { sf::Mouse::getPosition(_window) };
         const auto mouse_pos { _window.mapPixelToCoords(mouse_pixel_coords) };
@@ -377,12 +382,12 @@ namespace battleships::ui {
         }
         else { remove_state(State::HOVERING_BAR); }
 
-        //Checking if we are hovering the _rect -- Area the user types text into
+        //Checking if we are hovering the _content_area -- Area the user types text into
         //User will not be able to enter text if they are currently dragging the scrollbar
-        if (_rect->getGlobalBounds().contains(mouse_pos) && !has_state(State::DRAGGING)) {
-            add_state(State::HOVERING_RECT);
+        if (_content_area->getGlobalBounds().contains(mouse_pos) && !has_state(State::DRAGGING)) {
+            add_state(State::HOVERING_CONTENT_AREA);
         }
-        else { remove_state(State::HOVERING_RECT); }
+        else { remove_state(State::HOVERING_CONTENT_AREA); }
     }
 
     void Text_area::_handle_event__mouse_button_left_held() {
@@ -401,11 +406,20 @@ namespace battleships::ui {
             //Second frame and onwards of dragging
             //Now we snap the bar and adjust the view contents of our text area
             scrolling(mouse_pos);
+            _old_mouse_pos = mouse_pos;
         }
         else {
             //Reset mouse pos to zero, dragging finished
             remove_state(State::DRAGGING);
             _old_mouse_pos = {0.0f , 0.0f};
+        }
+    }
+
+    void Text_area::_handle_event__mouse_button_left_release() {
+
+        if (has_state(State::HOVERING_CONTENT_AREA)) {
+            add_state(State::FOCUSED);
+
         }
     }
 }

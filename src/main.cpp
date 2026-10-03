@@ -32,7 +32,7 @@ int main() {
     area1.set_size({500.0f, 125.0f});
     area1.set_scroll_bar_width(20.0f);
     area1.set_scrollable(true);
-    area1.set_rect_color(sf::Color(180, 50, 50));        // Red Box
+    area1.set_content_area_color(sf::Color(180, 50, 50));  // Red Box
     area1.set_scroll_bar_bg_color(sf::Color(50, 50, 50)); // Dark Gray BG
     area1.set_scroll_bar_color(sf::Color(50, 200, 50));   // Green Bar
 
