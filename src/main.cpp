@@ -17,10 +17,10 @@ int main() {
     LOG_LVLS_ENABLED(Log_lvl::WARN | Log_lvl::ERR | Log_lvl::INFO | Log_lvl::DEBUG);
 
     auto window = sf::RenderWindow(
-            sf::VideoMode({1920u, 1080u}),
+            sf::VideoMode({800u, 800u}),
             "Battleships",
             sf::Style::Default,
-            sf::State::Fullscreen,
+            sf::State::Windowed,
             sf::ContextSettings{.antiAliasingLevel = 4u}
         );
 

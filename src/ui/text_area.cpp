@@ -10,6 +10,8 @@
 #include "utils/include/colors.hpp"
 #include "utils/include/null_check.hpp"
 
+#include <string>
+
 // ============================================================================
 // Namespaces
 // ----------------------------------------------------------------------------
@@ -64,6 +66,7 @@ namespace battleships::ui {
 
         if (!has_state(State::HIDDEN)) {
             _window.draw(*_content_area);
+            _window.draw(*_text);
             if (has_state(State::SCROLLABLE)) { _window.draw(*_bar_background); }
             if (has_state(State::SCROLLABLE)) { _window.draw(*_scroll_bar); }
         }
@@ -148,6 +151,12 @@ namespace battleships::ui {
     bool Text_area::is_visible() const {
 
         if (has_state(State::HIDDEN)) { return false; }
+        else { return true; }
+    }
+
+    bool Text_area::is_typeable() const {
+
+        if (has_state(State::TYPING_DISABLED)) { return false; }
         else { return true; }
     }
 
@@ -262,6 +271,11 @@ namespace battleships::ui {
         else { add_state(State::HIDDEN); }
     }
 
+    void Text_area::set_typeable(const bool flag) {
+        if (flag) { remove_state(State::TYPING_DISABLED); }
+        else { add_state(State::TYPING_DISABLED); }
+    }
+
     //--------------------------
     // Private functions
     //--------------------------
@@ -326,17 +340,15 @@ namespace battleships::ui {
         _scroll_bar->setPosition(final_pos);
     }
 
+    void Text_area::build_string(const char32_t unicode) {
+
+        _text->getString();
+        sf::String;
+    }
+
     void Text_area::register_events() {
 
         auto& event_manager = events::SFML_event_manager::instance();
-
-        event_manager.register_callback(
-            events::SFML_event_type::MOUSE_MOVED,
-            [this](events::SFML_event_data const&) {
-                _handle_event__mouse_moved();
-            },
-            listener_id()
-        );
 
         event_manager.register_callback(
             events::SFML_event_type::MOUSE_BUTTON_LEFT_HELD,
@@ -353,19 +365,25 @@ namespace battleships::ui {
             },
             listener_id()
         );
+
+        event_manager.register_callback(
+            events::SFML_event_type::WINDOW_TEXT_ENTERED,
+            [this](events::SFML_event_data const& event_data) {
+                _handle_event__window_text_entered(event_data.sfml_event);
+            },
+            listener_id()
+        );
     }
 
-    void Text_area::_handle_event__mouse_moved() {
+    void Text_area::_handle_event__mouse_button_left_held() {
 
-        NULL_CHECK_VOID(_scroll_bar)
-        NULL_CHECK_VOID(_content_area)
+        NULL_CHECK_VOID(_bar_background)
+        const auto mouse_pixels {sf::Mouse::getPosition(_window) };
+        const auto mouse_pos {_window.mapPixelToCoords(mouse_pixels) };
 
-        const auto mouse_pixel_coords { sf::Mouse::getPosition(_window) };
-        const auto mouse_pos { _window.mapPixelToCoords(mouse_pixel_coords) };
-
-        //If we are currently dragging the scrollbar we can be less strict on staying in bounds
-        //This should remove frustration and make scrolling more pleasant
-        if (has_state(State::DRAGGING)) {
+        // We are currently dragging
+        // lenience will be taken into account for a better user experience
+        if (has_state(State::DRAGGING | State::SCROLLABLE)) {
             const sf::Vector2f bar_pos { _bar_background->getPosition() };
             const sf::Vector2f bar_size { _bar_background->getSize() };
 
@@ -373,53 +391,63 @@ namespace battleships::ui {
             const float max_lenience { bar_pos.x + bar_size.x + 50.0f };
 
             if ( !( mouse_pos.x >= min_lenience && mouse_pos.x <= max_lenience) ) {
-                remove_state(State::HOVERING_BAR);
+                remove_state(State::DRAGGING);
+                _old_mouse_pos = { 0.0f , 0.0f };
+            }
+            else {
+                scrolling(mouse_pos);
+                _old_mouse_pos = mouse_pos;
             }
         }
-        //Checking if we are hovering the scroll bar
-        else if (_scroll_bar->getGlobalBounds().contains(mouse_pos)) {
-            add_state(State::HOVERING_BAR);
-        }
-        else { remove_state(State::HOVERING_BAR); }
-
-        //Checking if we are hovering the _content_area -- Area the user types text into
-        //User will not be able to enter text if they are currently dragging the scrollbar
-        if (_content_area->getGlobalBounds().contains(mouse_pos) && !has_state(State::DRAGGING)) {
-            add_state(State::HOVERING_CONTENT_AREA);
-        }
-        else { remove_state(State::HOVERING_CONTENT_AREA); }
-    }
-
-    void Text_area::_handle_event__mouse_button_left_held() {
-
-        //Current mouse pos for this frame
-        const auto mouse_pixel_coords { sf::Mouse::getPosition(_window) };
-        const auto mouse_pos { _window.mapPixelToCoords(mouse_pixel_coords) };
-
-        if (has_state(State::HOVERING_BAR | State::SCROLLABLE) && !has_state(State::DRAGGING)) {
+        //Not currently dragging -- Check if in bounds to drag
+        else if (_scroll_bar->getGlobalBounds().contains(mouse_pos) && has_state(State::SCROLLABLE)) {
             //First frame we will just remember where the mouse was,
             //frames fire so fast the user should not even notice a delay until next frame.
             add_state(State::DRAGGING);
             _old_mouse_pos = mouse_pos;
         }
-        else if (has_state(State::HOVERING_BAR | State::SCROLLABLE | State::DRAGGING)) {
-            //Second frame and onwards of dragging
-            //Now we snap the bar and adjust the view contents of our text area
-            scrolling(mouse_pos);
-            _old_mouse_pos = mouse_pos;
-        }
-        else {
-            //Reset mouse pos to zero, dragging finished
+        //Turn dragging off and reset old mouse pos to default
+        //This will fire when SCROLLABLE turns to false and we were mid scrolling and need to revoke the task
+        else if (has_state(State::DRAGGING)) {
             remove_state(State::DRAGGING);
-            _old_mouse_pos = {0.0f , 0.0f};
+            _old_mouse_pos = { 0.0f , 0.0f };
         }
+        else { /*Mouse was held outside the bounds of our scrollbar. Simply do nothing*/ }
     }
 
     void Text_area::_handle_event__mouse_button_left_release() {
 
-        if (has_state(State::HOVERING_CONTENT_AREA)) {
-            add_state(State::FOCUSED);
+        NULL_CHECK_VOID(_content_area)
+        const auto mouse_pixels { sf::Mouse::getPosition(_window) };
+        const auto mouse_pos { _window.mapPixelToCoords(mouse_pixels) };
 
+        /*
+        Left release is used to enter the content area
+        It will give focus and then if we have focus pressing keys on the keyboard will enable
+        you to type and edit the sf::Text object
+        */
+        if (has_state(State::DRAGGING)) {
+            remove_state(State::DRAGGING);
+            _old_mouse_pos = { 0.0f , 0.0f };
+        }
+        else if (_content_area->getGlobalBounds().contains(mouse_pos)) {
+            add_state(State::FOCUSED);
+            LOG(Log_lvl::DEBUG) << "Focus gained.";
+        }
+        else {
+            remove_state(State::FOCUSED);
+            LOG(Log_lvl::DEBUG) << "Focus lost.";
+        }
+    }
+
+    void Text_area::_handle_event__window_text_entered(const sf::Event& event_data) {
+
+        const auto* const text_entered = event_data.getIf<sf::Event::TextEntered>();
+        if ((text_entered)
+            && (has_state(State::FOCUSED))
+            && (!has_state(State::TYPING_DISABLED))
+        ) {
+            build_string(text_entered->unicode);
         }
     }
 }

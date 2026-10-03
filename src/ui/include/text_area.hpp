@@ -35,8 +35,8 @@ class Text_area
 public:
 
     Text_area(
-            sf::RenderWindow& window, const
-            std::string_view widget_name
+            sf::RenderWindow& window,
+            const std::string_view widget_name
             );
 
     ~Text_area() = default;
@@ -63,10 +63,10 @@ private:
         NONE                    = 0,
         HIDDEN                  = 1 << 0,
         HOVERING_CONTENT_AREA   = 1 << 1, //Not implemented //Is your mouse hovering over the text area where the box is
-        FOCUSED                 = 1 << 2, //Not implemented //Are you currently in typing mode
-        DISABLED                = 1 << 3, //Not implemented //Are you able to type in it
+        FOCUSED                 = 1 << 2,
+        TYPING_DISABLED         = 1 << 3, //Not implemented //Are you able to type in it
         SCROLLABLE              = 1 << 4,
-        HOVERING_BAR            = 1 << 5,
+        HOVERING_BAR            = 1 << 5, //Not implemented //Are you hovering the scrollbar
         DRAGGING                = 1 << 6,
 
         DEFAULT = NONE
@@ -106,6 +106,7 @@ public:
 
     //Other functionality
     bool is_visible() const;
+    bool is_typeable() const;
 
     //--------------------------
     // Setters
@@ -147,6 +148,7 @@ public:
 
     //Other functionality
     void set_visible(const bool flag);
+    void set_typeable(const bool flag);
 
     //--------------------------
     // Private functions
@@ -157,12 +159,13 @@ private:
     void resize_scroll_bar();
     void register_events();
 
-    void _handle_event__mouse_moved();
-
     void _handle_event__mouse_button_left_held();
     void scrolling(const sf::Vector2f mouse_pos);
 
     void _handle_event__mouse_button_left_release();
+
+    void _handle_event__window_text_entered(const sf::Event& event_data);
+    void build_string(const char32_t unicode);
 
     //--------------------------
     // Attributes
