@@ -4,6 +4,7 @@
 // Includes
 // ----------------------------------------------------------------------------
 
+#include "events/include/event_listener.hpp"
 #include "events/include/game_event_manager.hpp"
 #include "events/include/sfml_event_manager.hpp"
 #include "menus/include/menu_manager.hpp"
@@ -25,7 +26,9 @@ namespace battleships::app {
 // Class App
 // ----------------------------------------------------------------------------
 
-class App {
+class App
+    : public battleships::events::Event_listener
+    {
 
     //--------------------------
     // Constructor / Destructor
@@ -53,7 +56,13 @@ private:
 
     void _build__fps_counter();
 
-    void _handle_event___settings_saved(events::Game_event_data const& data);
+    void _update(float const dt);
+
+    void _draw();
+
+    void _register_events();
+
+    void _handle_event__settings_saved(events::Game_event_data const& data);
 
     //--------------------------
     // Attributes
