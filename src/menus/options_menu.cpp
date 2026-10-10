@@ -73,9 +73,13 @@ Options_menu::Options_menu(
     : Menu(window)
     , _changed_settings()
     , _background_static_spritesheet(nullptr)
-    , _widgets(31u)
+    , _widgets()
     , _background_img(nullptr)
     {
+
+    std::size_t const total_number_of_widgets = 32u;
+
+    _widgets.reserve(total_number_of_widgets);
 
     _build__background_image();
 
