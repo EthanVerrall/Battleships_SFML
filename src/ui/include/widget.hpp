@@ -26,7 +26,8 @@ enum class Widget_type {
     SLIDER,
     CHECKBOX,
     SPINBOX,
-    HOTKEY_RECORDER
+    HOTKEY_RECORDER,
+    FPS_COUNTER
 };
 
 // ============================================================================

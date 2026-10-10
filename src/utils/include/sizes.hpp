@@ -30,6 +30,10 @@ inline constexpr float BUTTON_BORDER {4.0f};
 inline constexpr unsigned int ROW_LABEL_TEXT {32u};
 inline constexpr float ROW_LABEL_BORDER {2.0f};
 
+//FPS counter
+inline constexpr unsigned int FPS_COUNTER_TEXT {28u};
+inline constexpr float FPS_COUNTER_BORDER {2.0f};
+
 }
 
 }

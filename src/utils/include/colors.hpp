@@ -28,6 +28,9 @@ inline constexpr sf::Color HEADING_TEXT(sf::Color::Red);
 //Buttons
 inline constexpr sf::Color BUTTON_TEXT_HOVER(sf::Color::Yellow);
 
+//FPS counter
+inline constexpr sf::Color FPS_COUNTER_TEXT(sf::Color::Yellow);
+
 }
 
 }

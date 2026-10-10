@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <any>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -26,9 +27,14 @@ namespace battleships::app {
     // Constructor / Destructor
     //--------------------------
     App::App()
+        : _window()
+        , _fps_counter(nullptr)
     {
         settings::Settings_manager::instance().load();
+
         create_render_window();
+
+        _build__fps_counter();
     }
 
     //--------------------------
@@ -65,6 +71,22 @@ namespace battleships::app {
         LOG(utils::Log_lvl::TRACE) << "Render window created.";
     }
 
+    void App::_build__fps_counter() {
+
+        auto const& settings_manager = settings::Settings_manager::instance();
+
+        _fps_counter = std::make_unique<ui::Fps_counter>(_window, "fps_counter");
+
+        if (_fps_counter == nullptr) {
+
+            LOG(utils::Log_lvl::WARN) << "fps_counter is nullptr. Failed to build.";
+            return;
+        }
+
+        _fps_counter->set_pos({ 20.0f, 20.0f });
+        _fps_counter->set_visible(settings_manager.get<bool>("video_show_fps_counter"));
+    }
+
     void App::_handle_event___settings_saved(
         events::Game_event_data const& data
         ) {
@@ -92,6 +114,12 @@ namespace battleships::app {
 
             create_render_window();
             return;
+        }
+
+        if ((std::find(changed_keys->begin(), changed_keys->end(), "video_show_fps_counter") != changed_keys->end())
+            && (_fps_counter != nullptr)) {
+
+            _fps_counter->set_visible(settings_manager.get<bool>("video_show_fps_counter"));
         }
 
         if (std::find(changed_keys->begin(), changed_keys->end(), "video_vsync") != changed_keys->end()) {
@@ -134,13 +162,24 @@ namespace battleships::app {
             0
             );
 
+        sf::Clock frame_clock;
+
         while (_window.isOpen()){
 
+            float const dt = frame_clock.restart().asSeconds();
+
             sfml_events_manager.process_events(_window);
+
+            menu_manager.update(dt);
+
+            if (_fps_counter != nullptr) { _fps_counter->update(dt); }
 
             _window.clear(sf::Color::Black);
 
             menu_manager.draw();
+
+            // Drawn after the menu so the counter is never hidden behind it.
+            if (_fps_counter != nullptr) { _fps_counter->draw(); }
 
             _window.display();
 
