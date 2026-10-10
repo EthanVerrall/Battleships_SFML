@@ -7,13 +7,14 @@
 #include "menus/include/menu.hpp"
 #include "ui/include/widget.hpp"
 #include "resources/include/spritesheet.hpp"
+#include "settings/include/defs.hpp"
 
 #include "sfml/Graphics.hpp"
 
 #include <memory>
 #include <vector>
 #include <string_view>
-#include <optional>
+#include <unordered_map>
 
 // ============================================================================
 // Namespaces
@@ -115,24 +116,7 @@ private:
     //--------------------------
 private:
 
-    struct Changed_settings {
-
-        std::optional<float> music_volume;
-        std::optional<float> sfx_volume;
-        std::optional<bool> mute;
-
-        std::optional<sf::State> window_mode;
-        std::optional<bool> vsync;
-        std::optional<std::uint8_t> fps_cap;
-        std::optional<bool> show_fps_counter;
-        std::optional<std::uint8_t> anti_aliasing;
-
-        std::optional<sf::Keyboard::Key> rotate_ship;
-        std::optional<sf::Keyboard::Key> fire;
-        std::optional<sf::Keyboard::Key> confirm;
-        std::optional<sf::Keyboard::Key> cancel;
-        std::optional<sf::Keyboard::Key> menu;
-    } _changed_settings;
+    std::unordered_map<std::string_view, settings::Setting_value> _changed_settings;
 
     std::shared_ptr<resources::Static_spritesheet> _background_static_spritesheet;
 

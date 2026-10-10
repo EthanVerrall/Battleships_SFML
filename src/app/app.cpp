@@ -121,6 +121,7 @@ namespace battleships::app {
         auto& resource_manager = resources::Resource_manager::instance();
         auto& menu_manager = menus::Menu_manager::instance(_window);
 
+        // For testing purposes, delete in future TODO
         sfml_events_manager.register_callback(
             events::SFML_event_type::KEYRELEASE_ESCAPE,
             [this](events::SFML_event_data const&) { _window.close(); },

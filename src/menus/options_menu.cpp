@@ -16,6 +16,8 @@
 #include "ui/include/button.hpp"
 #include "settings/include/settings_manager.hpp"
 
+#include <variant>
+
 // ============================================================================
 // Using directives
 // ----------------------------------------------------------------------------
@@ -226,7 +228,7 @@ void Options_menu::_build__slider__music_volume() {
 
         widget->set_on_value_changed([this](float const vol){
 
-            _changed_settings.music_volume = vol;
+            _changed_settings["audio_music_volume"] = vol;
         });
     }
 }
@@ -273,7 +275,7 @@ void Options_menu::_build__slider__sfx_volume() {
 
         widget->set_on_value_changed([this](float const vol){
 
-            _changed_settings.sfx_volume = vol;
+            _changed_settings["audio_sfx_volume"] = vol;
         });
     }
 }
@@ -315,7 +317,7 @@ void Options_menu::_build__checkbox__mute() {
 
         widget->set_on_value_changed([this](bool const checked){
 
-            _changed_settings.mute = checked;
+            _changed_settings["audio_mute"] = checked;
         });
     }
 }
@@ -364,8 +366,8 @@ void Options_menu::_build__spinbox__window_mode() {
 
         widget->set_on_value_changed([this](std::string_view const val){
 
-            if (val == "Windowed") { _changed_settings.window_mode = sf::State::Windowed; }
-            if (val == "Fullscreen") { _changed_settings.window_mode = sf::State::Fullscreen; }
+            _changed_settings["video_window_mode"] =
+                (val == "Fullscreen") ? sf::State::Fullscreen : sf::State::Windowed;
         });
     }
 }
@@ -407,7 +409,7 @@ void Options_menu::_build__checkbox__vsync() {
 
         widget->set_on_value_changed([this](bool const checked){
 
-            _changed_settings.vsync = checked;
+            _changed_settings["video_vsync"] = checked;
         });
     }
 }
@@ -467,10 +469,11 @@ void Options_menu::_build__spinbox__fps_cap() {
 
             if (val == "Unlimited") {
 
-                _changed_settings.fps_cap = 0u;
+                _changed_settings["video_fps_cap"] = std::uint8_t{0u};
             } else {
 
-                _changed_settings.fps_cap = static_cast<std::uint8_t>(std::stoi(std::string(val)));
+                _changed_settings["video_fps_cap"] =
+                    static_cast<std::uint8_t>(std::stoi(std::string(val)));
             }
         });
     }
@@ -513,7 +516,7 @@ void Options_menu::_build__checkbox__show_fps_counter() {
 
         widget->set_on_value_changed([this](bool const checked){
 
-            _changed_settings.show_fps_counter = checked;
+            _changed_settings["video_show_fps_counter"] = checked;
         });
     }
 }
@@ -574,10 +577,11 @@ void Options_menu::_build__spinbox__anti_aliasing() {
 
             if (val == "Off") {
 
-                _changed_settings.anti_aliasing = 0u;
+                _changed_settings["video_anti_aliasing"] = std::uint8_t{0u};
             } else {
 
-                _changed_settings.anti_aliasing = static_cast<std::uint8_t>(std::stoi(std::string(val)));
+                _changed_settings["video_anti_aliasing"] =
+                    static_cast<std::uint8_t>(std::stoi(std::string(val)));
             }
         });
     }
@@ -617,7 +621,7 @@ void Options_menu::_build__hotkey_recorder__rotate_ship() {
 
         widget->set_on_key_changed([this](sf::Keyboard::Key const key){
 
-            _changed_settings.rotate_ship = key;
+            _changed_settings["keybinds_rotate_ship"] = key;
         });
     }
 }
@@ -656,7 +660,7 @@ void Options_menu::_build__hotkey_recorder__fire() {
 
         widget->set_on_key_changed([this](sf::Keyboard::Key const key){
 
-            _changed_settings.fire = key;
+            _changed_settings["keybinds_fire"] = key;
         });
     }
 }
@@ -695,7 +699,7 @@ void Options_menu::_build__hotkey_recorder__confirm() {
 
         widget->set_on_key_changed([this](sf::Keyboard::Key const key){
 
-            _changed_settings.confirm = key;
+            _changed_settings["keybinds_confirm"] = key;
         });
     }
 }
@@ -734,7 +738,7 @@ void Options_menu::_build__hotkey_recorder__cancel() {
 
         widget->set_on_key_changed([this](sf::Keyboard::Key const key){
 
-            _changed_settings.cancel = key;
+            _changed_settings["keybinds_cancel"] = key;
         });
     }
 }
@@ -773,7 +777,7 @@ void Options_menu::_build__hotkey_recorder__menu() {
 
         widget->set_on_key_changed([this](sf::Keyboard::Key const key){
 
-            _changed_settings.menu = key;
+            _changed_settings["keybinds_menu"] = key;
         });
     }
 }
@@ -897,33 +901,17 @@ void Options_menu::_save_changed_settings() {
 
     auto& settings_manager = Settings_manager::instance();
 
-    auto set_if_changed = [&settings_manager](
-        std::string_view const setting_key,
-        auto const& val
-        ) {
+    for (auto const& [key, value] : _changed_settings) {
 
-        if (val.has_value()) { settings_manager.set(setting_key, val.value()); }
-        };
-
-    set_if_changed("audio_music_volume", _changed_settings.music_volume);
-    set_if_changed("audio_sfx_volume", _changed_settings.sfx_volume);
-    set_if_changed("audio_mute", _changed_settings.mute);
-
-    set_if_changed("video_window_mode", _changed_settings.window_mode);
-    set_if_changed("video_vsync", _changed_settings.vsync);
-    set_if_changed("video_fps_cap", _changed_settings.fps_cap);
-    set_if_changed("video_show_fps_counter", _changed_settings.show_fps_counter);
-    set_if_changed("video_anti_aliasing", _changed_settings.anti_aliasing);
-
-    set_if_changed("keybinds_rotate_ship", _changed_settings.rotate_ship);
-    set_if_changed("keybinds_fire", _changed_settings.fire);
-    set_if_changed("keybinds_confirm", _changed_settings.confirm);
-    set_if_changed("keybinds_cancel", _changed_settings.cancel);
-    set_if_changed("keybinds_menu", _changed_settings.menu);
+        std::visit(
+            [&settings_manager, key](auto const& data) { settings_manager.set(key, data); },
+            value
+            );
+    }
 
     settings_manager.save();
 
-    _changed_settings = Changed_settings{};
+    _changed_settings.clear();
 }
 
 }
