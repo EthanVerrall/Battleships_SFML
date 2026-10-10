@@ -15,6 +15,7 @@
 #include <vector>
 #include <string_view>
 #include <unordered_map>
+#include <functional>
 
 // ============================================================================
 // Namespaces
@@ -107,6 +108,13 @@ private:
         std::string_view const name,
         std::string_view const text,
         sf::Vector2f const pos
+        );
+
+    void _build_slider(
+        std::string_view const name,
+        sf::Vector2f const pos,
+        float const val,
+        std::function<void(float)> on_value_changed
         );
 
     void _save_changed_settings();

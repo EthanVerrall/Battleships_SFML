@@ -195,42 +195,14 @@ void Options_menu::_build__lbl__music_volume() {
 // ----------------------------------------------------------------------------
 void Options_menu::_build__slider__music_volume() {
 
-    auto slider = std::make_unique<Slider>(
-        _window,
-        "slider_music_volume"
+    auto& settings_manager = Settings_manager::instance();
+
+    _build_slider(
+        "slider_music_volume",
+        {COL_AUDIO_WIDGET_X, ROW_START_Y + (0.0f * AUDIO_ROW_STEP) + SLIDER_ALIGN_Y},
+        settings_manager.get<float>("audio_music_volume"),
+        [this](float const vol){ _changed_settings["audio_music_volume"] = vol; }
         );
-
-    if (!slider) {
-
-        LOG(utils::Log_lvl::WARN) << "slider_music_volume" << " is nullptr on options menu. Failed to build.";
-    } else {
-
-        auto widget = _add_widget_to_container(std::move(slider));
-
-        auto& settings_manager = Settings_manager::instance();
-
-        widget->set_size({220.0f, 20.0f});
-        widget->set_fill_color(colors::HEADING_TEXT);
-        widget->set_track_color(colors::BUTTON_TEXT_HOVER);
-        widget->set_track_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
-        widget->set_pos({COL_AUDIO_WIDGET_X, ROW_START_Y + (0.0f * AUDIO_ROW_STEP) + SLIDER_ALIGN_Y});
-        widget->set_handle_radius(15.0f);
-        widget->set_handle_color(colors::HEADING_TEXT);
-        widget->set_handle_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
-        widget->set_text_offset({0.0f, -35.0f});
-        widget->set_text_color(colors::DEFAULT_TEXT);
-        widget->set_text_border({ .color = colors::DEFAULT_BORDER, .size = 2.0f });
-        widget->set_range(0.0f, 100.0f);
-        widget->set_value(settings_manager.get<float>("audio_music_volume"));
-
-        widget->set_on_hover([widget]() { widget->set_handle_color(colors::DEFAULT_TEXT); });
-        widget->set_on_exit_hover([widget]() { widget->set_handle_color(colors::HEADING_TEXT); });
-
-        widget->set_on_value_changed([this](float const vol){
-
-            _changed_settings["audio_music_volume"] = vol;
-        });
-    }
 }
 
 // ----------------------------------------------------------------------------
@@ -242,42 +214,14 @@ void Options_menu::_build__lbl__sfx_volume() {
 // ----------------------------------------------------------------------------
 void Options_menu::_build__slider__sfx_volume() {
 
-    auto slider = std::make_unique<Slider>(
-        _window,
-        "slider_sfx_volume"
+    auto& settings_manager = Settings_manager::instance();
+
+    _build_slider(
+        "slider_sfx_volume",
+        {COL_AUDIO_WIDGET_X, ROW_START_Y + (1.0f * AUDIO_ROW_STEP) + SLIDER_ALIGN_Y},
+        settings_manager.get<float>("audio_sfx_volume"),
+        [this](float const vol){ _changed_settings["audio_sfx_volume"] = vol; }
         );
-
-    if (!slider) {
-
-        LOG(utils::Log_lvl::WARN) << "slider_sfx_volume" << " is nullptr on options menu. Failed to build.";
-    } else {
-
-        auto widget = _add_widget_to_container(std::move(slider));
-
-        auto& settings_manager = Settings_manager::instance();
-
-        widget->set_size({220.0f, 20.0f});
-        widget->set_fill_color(colors::HEADING_TEXT);
-        widget->set_track_color(colors::BUTTON_TEXT_HOVER);
-        widget->set_track_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
-        widget->set_pos({COL_AUDIO_WIDGET_X, ROW_START_Y + (1.0f * AUDIO_ROW_STEP) + SLIDER_ALIGN_Y});
-        widget->set_handle_radius(15.0f);
-        widget->set_handle_color(colors::HEADING_TEXT);
-        widget->set_handle_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
-        widget->set_text_offset({0.0f, -35.0f});
-        widget->set_text_color(colors::DEFAULT_TEXT);
-        widget->set_text_border({ .color = colors::DEFAULT_BORDER, .size = 2.0f });
-        widget->set_range(0.0f, 100.0f);
-        widget->set_value(settings_manager.get<float>("audio_sfx_volume"));
-
-        widget->set_on_hover([widget]() { widget->set_handle_color(colors::DEFAULT_TEXT); });
-        widget->set_on_exit_hover([widget]() { widget->set_handle_color(colors::HEADING_TEXT); });
-
-        widget->set_on_value_changed([this](float const vol){
-
-            _changed_settings["audio_sfx_volume"] = vol;
-        });
-    }
 }
 
 // ----------------------------------------------------------------------------
@@ -893,6 +837,47 @@ void Options_menu::_build_lbl_section(
 
         float const label_half_width = widget->get_size().x / 2.0f;
         widget->set_pos({ pos.x - label_half_width, pos.y });
+    }
+}
+
+// ----------------------------------------------------------------------------
+void Options_menu::_build_slider(
+    std::string_view const name,
+    sf::Vector2f const pos,
+    float const val,
+    std::function<void(float)> on_value_changed
+    ) {
+
+    auto slider = std::make_unique<Slider>(
+        _window,
+        name
+        );
+
+    if (!slider) {
+
+        LOG(utils::Log_lvl::WARN) << "slider " << name << " is nullptr on options menu. Failed to build.";
+    } else {
+
+        auto widget = _add_widget_to_container(std::move(slider));
+
+        widget->set_size({220.0f, 20.0f});
+        widget->set_fill_color(colors::HEADING_TEXT);
+        widget->set_track_color(colors::BUTTON_TEXT_HOVER);
+        widget->set_track_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
+        widget->set_pos(pos);
+        widget->set_handle_radius(15.0f);
+        widget->set_handle_color(colors::HEADING_TEXT);
+        widget->set_handle_border({ .color = colors::DEFAULT_BORDER, .size = sizes::BUTTON_BORDER });
+        widget->set_text_offset({0.0f, -35.0f});
+        widget->set_text_color(colors::DEFAULT_TEXT);
+        widget->set_text_border({ .color = colors::DEFAULT_BORDER, .size = 2.0f });
+        widget->set_range(0.0f, 100.0f);
+        widget->set_value(val);
+
+        widget->set_on_hover([widget]() { widget->set_handle_color(colors::DEFAULT_TEXT); });
+        widget->set_on_exit_hover([widget]() { widget->set_handle_color(colors::HEADING_TEXT); });
+
+        widget->set_on_value_changed(std::move(on_value_changed));
     }
 }
 
