@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <string_view>
+#include <string>
 #include <unordered_map>
 #include <functional>
 
@@ -115,6 +116,35 @@ private:
         sf::Vector2f const pos,
         float const val,
         std::function<void(float)> on_value_changed
+        );
+
+    void _build_spinbox(
+        std::string_view const name,
+        sf::Vector2f const pos,
+        std::vector<std::string> const& values,
+        std::string_view const selected_value,
+        std::function<void(std::string_view)> on_value_changed
+        );
+
+    void _build_checkbox(
+        std::string_view const name,
+        sf::Vector2f const pos,
+        bool const checked,
+        std::function<void(bool)> on_value_changed
+        );
+
+    void _build_hotkey_recorder(
+        std::string_view const name,
+        sf::Vector2f const pos,
+        sf::Keyboard::Key const key,
+        std::function<void(sf::Keyboard::Key)> on_key_changed
+        );
+
+    void _build_btn(
+        std::string_view const name,
+        std::string_view const text,
+        sf::Vector2f const pos,
+        std::function<void()> on_left_click
         );
 
     void _save_changed_settings();
