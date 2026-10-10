@@ -39,6 +39,7 @@ Checkbox::Checkbox(
     , _rect(nullptr)
     , _checkmark_piece_left(nullptr)
     , _checkmark_piece_right(nullptr)
+    , _on_value_changed()
     , _on_hover()
     , _on_exit_hover()
     {
@@ -182,10 +183,12 @@ void Checkbox::_handle_event__mouse_button_left_release() {
 
             // Uncheck
             _set_flag(State::CHECKED, false);
+            if (_on_value_changed) { _on_value_changed(false); }
         } else {
 
             // Check
             _set_flag(State::CHECKED, true);
+            if (_on_value_changed) { _on_value_changed(true); }
         }
     }
 }
@@ -432,6 +435,16 @@ void Checkbox::set_border(
 }
 
 // ----------------------------------------------------------------------------
+void Checkbox::set_checked(
+    bool const checked
+    ) {
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_checked to " << checked;
+
+    _set_flag(State::CHECKED, checked);
+}
+
+// ----------------------------------------------------------------------------
 void Checkbox::set_checkmark_color(
     sf::Color const color
     ) {
@@ -473,6 +486,16 @@ void Checkbox::set_checkmark_border(
 
     _checkmark_piece_right->setOutlineColor(border.color);
     _checkmark_piece_right->setOutlineThickness(border.size);
+}
+
+// ----------------------------------------------------------------------------
+void Checkbox::set_on_value_changed(
+    std::function<void(bool const checked)> call_back
+    ) {
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_on_value_changed";
+
+    _on_value_changed = std::move(call_back);
 }
 
 // ----------------------------------------------------------------------------

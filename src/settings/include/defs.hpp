@@ -82,6 +82,7 @@ inline Setting_key_entry const SETTING_KEYS[] = {
     { "video_vsync", bool{} },
     { "video_fps_cap", std::uint8_t{} },
     { "video_show_fps_counter", bool{} },
+    { "video_anti_aliasing", std::uint8_t{} },
 
     { "keybinds_rotate_ship", sf::Keyboard::Key{} },
     { "keybinds_fire", sf::Keyboard::Key{} },

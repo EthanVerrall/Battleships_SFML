@@ -9,8 +9,10 @@
 
 #include "SFML/Graphics.hpp"
 
+#include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 // ============================================================================
 // Namespaces
@@ -46,7 +48,7 @@ public:
 
     void load();
 
-    void save() const;
+    void save();
 
     void clear();
 
@@ -55,6 +57,8 @@ public:
 private:
 
     void _emit_event___settings_changed(std::string_view const key);
+
+    void _emit_event___settings_saved();
 
     Setting_key_entry const* _resolve_key(std::string_view const key) const;
 
@@ -80,6 +84,7 @@ public:
 private:
 
     std::unordered_map<std::string_view, Setting_value> _settings;
+    std::unordered_set<std::string_view> _changed_keys;
 };
 
 // ============================================================================
@@ -143,7 +148,24 @@ void Settings_manager::set(
         return;
     }
 
-    _settings[entry->name] = Setting_value(value);
+    auto const it = _settings.find(entry->name);
+
+    if (it == _settings.end()) {
+
+        LOG(battleships::utils::Log_lvl::ERR) << "Could not set setting '"
+            << key << "', not found in map";
+        return;
+    }
+
+    if (std::get<T>(it->second) == value) {
+
+        // Trying to set a setting to the same value
+        return;
+    }
+
+    it->second = Setting_value(value);
+
+    _changed_keys.insert(entry->name);
 
     _emit_event___settings_changed(entry->name);
 }

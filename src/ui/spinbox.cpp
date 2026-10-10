@@ -36,6 +36,7 @@ Spinbox::Spinbox(
     , _button_next(nullptr)
     , _layout_mode(Spinbox_layout::HORIZONTAL)
     , _button_offset(8.0f, 0.0f)
+    , _button_perpendicular_shift(0.0f)
     , _button_prev_manual_pos(false)
     , _button_next_manual_pos(false)
     , _values()
@@ -115,15 +116,20 @@ void Spinbox::_layout() {
     sf::Vector2f const origin = _label->get_pos();
     sf::Vector2f const label_size = _label->get_size();
     sf::Vector2f const prev_size = _button_prev->get_size();
+    sf::Vector2f const next_size = _button_next->get_size();
 
     if (!_button_prev_manual_pos) {
 
         if (_layout_mode == Spinbox_layout::HORIZONTAL) {
 
-            _button_prev->set_bounds_pos({ origin.x - prev_size.x, origin.y });
+            float const centered_y = origin.y + ((label_size.y - prev_size.y) * 0.5f) + _button_perpendicular_shift;
+
+            _button_prev->set_bounds_pos({ origin.x - prev_size.x, centered_y });
         } else {
 
-            _button_prev->set_bounds_pos({ origin.x, origin.y - prev_size.y });
+            float const centered_x = origin.x + ((label_size.x - prev_size.x) * 0.5f) + _button_perpendicular_shift;
+
+            _button_prev->set_bounds_pos({ centered_x, origin.y - prev_size.y });
         }
 
         _button_prev->set_bounds_pos(_button_prev->get_bounds_pos() - _button_offset);
@@ -133,10 +139,14 @@ void Spinbox::_layout() {
 
         if (_layout_mode == Spinbox_layout::HORIZONTAL) {
 
-            _button_next->set_bounds_pos({ origin.x + label_size.x, origin.y });
+            float const centered_y = origin.y + ((label_size.y - next_size.y) * 0.5f) + _button_perpendicular_shift;
+
+            _button_next->set_bounds_pos({ origin.x + label_size.x, centered_y });
         } else {
 
-            _button_next->set_bounds_pos({ origin.x, origin.y + label_size.y });
+            float const centered_x = origin.x + ((label_size.x - next_size.x) * 0.5f) + _button_perpendicular_shift;
+
+            _button_next->set_bounds_pos({ centered_x, origin.y + label_size.y });
         }
 
         _button_next->set_bounds_pos(_button_next->get_bounds_pos() + _button_offset);
@@ -314,6 +324,12 @@ sf::Vector2f Spinbox::get_button_offset() const {
 }
 
 // ----------------------------------------------------------------------------
+float Spinbox::get_button_perpendicular_shift() const {
+
+    return _button_perpendicular_shift;
+}
+
+// ----------------------------------------------------------------------------
 std::vector<std::string> const& Spinbox::get_values() const {
 
     return _values;
@@ -431,6 +447,19 @@ void Spinbox::set_button_offset(
 }
 
 // ----------------------------------------------------------------------------
+void Spinbox::set_button_perpendicular_shift(
+    float const shift
+    ) {
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_button_perpendicular_shift from "
+    << _button_perpendicular_shift << " to " << shift;
+
+    _button_perpendicular_shift = shift;
+
+    _layout();
+}
+
+// ----------------------------------------------------------------------------
 void Spinbox::set_button_prev_pos(
     sf::Vector2f const pos
     ) {
@@ -527,6 +556,54 @@ void Spinbox::set_on_value_changed(
 }
 
 // ----------------------------------------------------------------------------
+void Spinbox::set_button_prev_on_hover(
+    std::function<void()> call_back
+    ) {
+
+    NULL_CHECK_VOID(_button_prev)
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_button_prev_on_hover";
+
+    _button_prev->set_on_hover(std::move(call_back));
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_prev_on_exit_hover(
+    std::function<void()> call_back
+    ) {
+
+    NULL_CHECK_VOID(_button_prev)
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_button_prev_on_exit_hover";
+
+    _button_prev->set_on_exit_hover(std::move(call_back));
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_next_on_hover(
+    std::function<void()> call_back
+    ) {
+
+    NULL_CHECK_VOID(_button_next)
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_button_next_on_hover";
+
+    _button_next->set_on_hover(std::move(call_back));
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_next_on_exit_hover(
+    std::function<void()> call_back
+    ) {
+
+    NULL_CHECK_VOID(_button_next)
+
+    LOG(Log_lvl::TRACE) << _data.name << ": set_button_next_on_exit_hover";
+
+    _button_next->set_on_exit_hover(std::move(call_back));
+}
+
+// ----------------------------------------------------------------------------
 void Spinbox::set_font(
     std::string_view const font_name
     ) {
@@ -543,17 +620,67 @@ void Spinbox::set_font(
 }
 
 // ----------------------------------------------------------------------------
-void Spinbox::set_text_color(
+void Spinbox::set_label_text_color(
     sf::Color const color
     ) {
 
     NULL_CHECK_VOID(_label)
+
+    _label->set_text_color(color);
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_text_color(
+    sf::Color const color
+    ) {
+
     NULL_CHECK_VOID(_button_prev)
     NULL_CHECK_VOID(_button_next)
 
-    _label->set_text_color(color);
     _button_prev->set_text_color(color);
     _button_next->set_text_color(color);
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_prev_text_color(
+    sf::Color const color
+    ) {
+
+    NULL_CHECK_VOID(_button_prev)
+
+    _button_prev->set_text_color(color);
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_next_text_color(
+    sf::Color const color
+    ) {
+
+    NULL_CHECK_VOID(_button_next)
+
+    _button_next->set_text_color(color);
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_label_border(
+    Widget_border const border
+    ) {
+
+    NULL_CHECK_VOID(_label)
+
+    _label->set_border(border);
+}
+
+// ----------------------------------------------------------------------------
+void Spinbox::set_button_border(
+    Widget_border const border
+    ) {
+
+    NULL_CHECK_VOID(_button_prev)
+    NULL_CHECK_VOID(_button_next)
+
+    _button_prev->set_text_border(border);
+    _button_next->set_text_border(border);
 }
 
 // ----------------------------------------------------------------------------

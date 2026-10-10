@@ -26,6 +26,10 @@ inline constexpr float SECTIONS_BORDER {3.0f};
 inline constexpr unsigned int BUTTON_TEXT {65u};
 inline constexpr float BUTTON_BORDER {4.0f};
 
+//Row labels
+inline constexpr unsigned int ROW_LABEL_TEXT {32u};
+inline constexpr float ROW_LABEL_BORDER {2.0f};
+
 }
 
 }

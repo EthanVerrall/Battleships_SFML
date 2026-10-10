@@ -1,2 +1,13 @@
-anti_aliasing = 4
-window_state = 1
+audio_music_volume = 39.473686218261719
+audio_mute = true
+audio_sfx_volume = 97.368415832519531
+keybinds_cancel = 36
+keybinds_confirm = 58
+keybinds_fire = 38
+keybinds_menu = 12
+keybinds_rotate_ship = 17
+video_anti_aliasing = 8
+video_fps_cap = 30
+video_show_fps_counter = true
+video_vsync = true
+video_window_mode = 0

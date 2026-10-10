@@ -48,6 +48,8 @@ private:
 
     void create_render_window();
 
+    void _handle_event___settings_saved(events::Game_event_data const& data);
+
     //--------------------------
     // Attributes
     //--------------------------

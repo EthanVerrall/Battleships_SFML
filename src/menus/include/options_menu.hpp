@@ -68,6 +68,7 @@ private:
     void _build__lbl__vsync();            void _build__checkbox__vsync();
     void _build__lbl__fps_cap();          void _build__spinbox__fps_cap();
     void _build__lbl__show_fps_counter(); void _build__checkbox__show_fps_counter();
+    void _build__lbl__anti_aliasing();    void _build__spinbox__anti_aliasing();
 
     void _build__lbl__rotate_ship();      void _build__hotkey_recorder__rotate_ship();
     void _build__lbl__fire();             void _build__hotkey_recorder__fire();
@@ -124,6 +125,7 @@ private:
         std::optional<bool> vsync;
         std::optional<std::uint8_t> fps_cap;
         std::optional<bool> show_fps_counter;
+        std::optional<std::uint8_t> anti_aliasing;
 
         std::optional<sf::Keyboard::Key> rotate_ship;
         std::optional<sf::Keyboard::Key> fire;

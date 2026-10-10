@@ -111,6 +111,8 @@ public:
 
     sf::Vector2f get_button_offset() const;
 
+    float get_button_perpendicular_shift() const;
+
     std::vector<std::string> const& get_values() const;
 
     std::size_t get_selected_index() const;
@@ -139,6 +141,8 @@ public:
 
     void set_button_offset(sf::Vector2f const offset);
 
+    void set_button_perpendicular_shift(float const shift);
+
     void set_button_prev_pos(sf::Vector2f const pos);
 
     void set_button_next_pos(sf::Vector2f const pos);
@@ -151,9 +155,27 @@ public:
 
     void set_on_value_changed(std::function<void(std::string_view const)> call_back);
 
+    void set_button_prev_on_hover(std::function<void()> call_back);
+
+    void set_button_prev_on_exit_hover(std::function<void()> call_back);
+
+    void set_button_next_on_hover(std::function<void()> call_back);
+
+    void set_button_next_on_exit_hover(std::function<void()> call_back);
+
     void set_font(std::string_view const font_name);
 
-    void set_text_color(sf::Color const color);
+    void set_label_text_color(sf::Color const color);
+
+    void set_button_text_color(sf::Color const color);
+
+    void set_button_prev_text_color(sf::Color const color);
+
+    void set_button_next_text_color(sf::Color const color);
+
+    void set_label_border(Widget_border const border);
+
+    void set_button_border(Widget_border const border);
 
     void set_visible(bool const visible);
 
@@ -169,6 +191,7 @@ private:
     Spinbox_layout _layout_mode;
 
     sf::Vector2f _button_offset;
+    float _button_perpendicular_shift;
 
     bool _button_prev_manual_pos;
     bool _button_next_manual_pos;

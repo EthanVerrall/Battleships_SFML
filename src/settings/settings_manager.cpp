@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <vector>
 
 // ============================================================================
 // Namespaces
@@ -71,7 +72,7 @@ void Settings_manager::load() {
 }
 
 // ----------------------------------------------------------------------------
-void Settings_manager::save() const {
+void Settings_manager::save() {
 
     toml::table table;
 
@@ -96,12 +97,17 @@ void Settings_manager::save() const {
     }
 
     file << table;
+
+    _emit_event___settings_saved();
+
+    _changed_keys.clear();
 }
 
 // ----------------------------------------------------------------------------
 void Settings_manager::clear() {
 
     _settings.clear();
+    _changed_keys.clear();
 }
 
 // ----------------------------------------------------------------------------
@@ -145,6 +151,29 @@ void Settings_manager::_emit_event___settings_changed(
     game_event_manager.emit(
         event,
         Game_event_data{ .payload = key }
+        );
+}
+
+// ----------------------------------------------------------------------------
+void Settings_manager::_emit_event___settings_saved() {
+
+    Game_event_type const event = Game_event_type::SETTINGS_SAVED;
+
+    LOG(Log_lvl::TRACE) << "Emitting event: " << event;
+
+    std::vector<std::string> changed_keys;
+    changed_keys.reserve(_changed_keys.size());
+
+    for (auto const& key : _changed_keys) {
+
+        changed_keys.emplace_back(key);
+    }
+
+    auto& game_event_manager = Game_event_manager::instance();
+
+    game_event_manager.emit(
+        event,
+        Game_event_data{ .payload = std::move(changed_keys) }
         );
 }
 

@@ -123,12 +123,15 @@ public:
 
     void set_border(Widget_border const border);
 
+    void set_checked(bool const checked);
+
     void set_checkmark_color(sf::Color const color);
 
     void set_checkmark_size(sf::Vector2f const size);
 
     void set_checkmark_border(Widget_border const border);
 
+    void set_on_value_changed(std::function<void(bool const checked)> call_back);
     void set_on_hover(std::function<void()> call_back);
     void set_on_exit_hover(std::function<void()> call_back);
 
@@ -142,6 +145,7 @@ private:
     std::unique_ptr<sf::RectangleShape> _checkmark_piece_left;
     std::unique_ptr<sf::RectangleShape> _checkmark_piece_right;
 
+    std::function<void(bool const checked)> _on_value_changed;
     std::function<void()> _on_hover;
     std::function<void()> _on_exit_hover;
 };
