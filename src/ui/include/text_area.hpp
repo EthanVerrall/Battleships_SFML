@@ -64,7 +64,7 @@ private:
         HIDDEN                  = 1 << 0,
         HOVERING_CONTENT_AREA   = 1 << 1, //Not implemented //Is your mouse hovering over the text area where the box is
         FOCUSED                 = 1 << 2,
-        TYPING_DISABLED         = 1 << 3, //Not implemented //Are you able to type in it
+        TYPING_DISABLED         = 1 << 3,
         SCROLLABLE              = 1 << 4,
         HOVERING_BAR            = 1 << 5, //Not implemented //Are you hovering the scrollbar
         DRAGGING                = 1 << 6,
@@ -72,39 +72,43 @@ private:
         DEFAULT = NONE
     }; std::uint8_t _state;
 
-    //Overloading the | operator to allow chaining states
-    friend inline State operator|(State a, State b) {
-        return static_cast<State>(
-            static_cast<std::uint8_t> (a) | static_cast<std::uint8_t> (b)
-        );
-    }
+    void set_state(const uint8_t state);
+    void add_state(const uint8_t state);
+    void remove_state(const uint8_t state);
+    bool has_state(const uint8_t state) const;
 
-    void set_state(const State state);
-    void add_state(const State state);
-    void remove_state(const State state);
-    bool has_state(const State state) const;
+    //--------------------------
+    // Caret Data
+    //--------------------------
+private:
+
+    struct Caret {
+        std::unique_ptr<sf::RectangleShape> rect;
+        std::size_t index;
+    };
 
     //--------------------------
     // Getters
     //--------------------------
 public:
 
-    //Positioning and sizing
+    // Positioning and sizing
     sf::Vector2f get_pos() const;
     sf::Vector2f get_size() const; // This returns the total size of the text area, includes the scrollbar dimensions
     sf::Vector2f get_scale() const; // Not implemented
 
-    //Rect functions
+    // content area functions
     sf::Color get_content_area_color() const;
     sf::Vector2f get_content_area_size() const; // This returns the size of the typing zone for your text area
+    sf::Color get_caret_color() const;
 
-    //Scroll functions
+    // Scroll functions
     float get_scoll_bar_width() const;
     sf::Color get_scroll_bar_bg_color() const; // Color for behind the bar
     sf::Color get_scroll_bar_color() const; // Color for the scrollbar
     bool is_scrollable() const;
 
-    //Other functionality
+    // Other functionality
     bool is_visible() const;
     bool is_typeable() const;
 
@@ -113,7 +117,7 @@ public:
     //--------------------------
 public:
 
-    //Positioning and sizing
+    // Positioning and sizing
 
     /*
     This function sets the position of your text_area to its top left most point
@@ -132,21 +136,22 @@ public:
     */
     void set_size(const sf::Vector2f size);
 
-    //Not implemented
+    // Not implemented
     void set_scale(const sf::Vector2f scale);
 
-    //Rect functions
+    // content area functions
     void set_content_area_color(const sf::Color color);
     void set_content_area_width(const float width);
     void set_content_area_height(const float height);
+    void set_caret_color(const sf::Color color);
 
-    //Scroll functions
+    // Scroll functions
     void set_scroll_bar_width(const float width);
-    void set_scroll_bar_bg_color(const sf::Color color); //Color for behind the bar
-    void set_scroll_bar_color(const sf::Color color); //Color for the scrollbar
+    void set_scroll_bar_bg_color(const sf::Color color); // Color for behind the bar
+    void set_scroll_bar_color(const sf::Color color); // Color for the scrollbar
     void set_scrollable(const bool flag);
 
-    //Other functionality
+    // Other functionality
     void set_visible(const bool flag);
     void set_typeable(const bool flag);
 
@@ -157,15 +162,24 @@ private:
 
     void reposition_scroll_bar();
     void resize_scroll_bar();
-    void register_events();
 
-    void _handle_event__mouse_button_left_held();
+    //Working on
+    void reposition_caret(const size_t snap_to_pos);
+    //Working on
+    void move_caret(const size_t delta);
+
+    //Working on
+    void set_view();
+    //Working on
     void scrolling(const sf::Vector2f mouse_pos);
-
-    void _handle_event__mouse_button_left_release();
-
-    void _handle_event__window_text_entered(const sf::Event& event_data);
+    //Working on
     void build_string(const char32_t unicode);
+
+    void register_events();
+    void _handle_event__mouse_button_left_held();
+    void _handle_event__mouse_button_left_release();
+    void _handle_event__window_text_entered(const sf::Event& event_data);
+
 
     //--------------------------
     // Attributes
@@ -174,16 +188,21 @@ private:
 
     // Area the user types in, _content_area is where the text displays,
     std::unique_ptr<sf::RectangleShape> _content_area;
+
     // The _caret is the blinking cursor.
-    std::unique_ptr<sf::RectangleShape> _caret;
+    Caret _caret;
+
+    // The view the text is drawn onto
+    std::unique_ptr<sf::View> _view;
 
     // All the different pieces of the scroll bar
+
     std::unique_ptr<sf::RectangleShape> _bar_background;
     std::unique_ptr<sf::RectangleShape> _scroll_bar;
-    std::unique_ptr<Button> _up_arrow;                  //Not implemented yet
-    std::unique_ptr<Button> _down_arrow;                //Not implemented yet
+    std::unique_ptr<Button> _up_arrow;                  // Not implemented yet
+    std::unique_ptr<Button> _down_arrow;                // Not implemented yet
 
-    //Used for scroll bar, recording old mouse position
+    // Used for scroll bar, recording old mouse position
     sf::Vector2f _old_mouse_pos;
 
     // Font details

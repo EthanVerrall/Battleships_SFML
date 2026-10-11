@@ -33,7 +33,8 @@ namespace battleships::ui {
         : Widget(window, Widget_data{.name = widget_name, .type = Widget_type::TEXT_AREA})
         , _state(State::DEFAULT)
         , _content_area(std::make_unique<sf::RectangleShape>())
-        , _caret(std::make_unique<sf::RectangleShape>())
+        , _caret(Caret{ .rect = std::make_unique<sf::RectangleShape>(), .index = 0})
+        , _view(std::make_unique<sf::View>())
         , _bar_background(std::make_unique<sf::RectangleShape>())
         , _scroll_bar(std::make_unique<sf::RectangleShape>())
         , _up_arrow(std::make_unique<Button>(_window, "up arrow"))
@@ -44,13 +45,15 @@ namespace battleships::ui {
         if (auto temp_font = resources::Asset_registry::load_font(_font_name)) {
             _font = std::move(temp_font);
             _text = std::make_unique<sf::Text> (*_font);
-            register_events();
 
             LOG(utils::Log_lvl::TRACE) << "Created text_area " << _data.name;
         }
         else {
             LOG(utils::Log_lvl::WARN) << "Failed to load " << _font_name << " font for text_area " << widget_name;
         }
+        register_events();
+        set_view();
+        reposition_caret(0);
     }
 
     //--------------------------
@@ -63,26 +66,37 @@ namespace battleships::ui {
         NULL_CHECK_VOID(_content_area)
         NULL_CHECK_VOID(_bar_background)
         NULL_CHECK_VOID(_scroll_bar)
+        NULL_CHECK_VOID(_text)
+
+        const sf::View old_view = _window.getView();
 
         if (!has_state(State::HIDDEN)) {
             _window.draw(*_content_area);
-            _window.draw(*_text);
             if (has_state(State::SCROLLABLE)) { _window.draw(*_bar_background); }
             if (has_state(State::SCROLLABLE)) { _window.draw(*_scroll_bar); }
+            _window.setView(*_view);
+            _window.draw(*_text);
+            if (_caret.rect && has_state(State::FOCUSED)) {
+                const auto& rect { _caret.rect };
+                _window.draw(*rect);
+            };
+            _window.setView(old_view);
         }
     }
 
-    void Text_area::update(float const dt) { //Not implemented -- Do nothing
+    //Not implemented -- Final decision
+    void Text_area::update(float const dt) {
+        LOG(utils::Log_lvl::WARN) << "Attempting to use unimplemented function.";
         static_cast<void> (dt);
     }
 
     //--------------------------
     // States
     //--------------------------
-    void Text_area::set_state(const State state) { _state = state; }
-    void Text_area::add_state(const State state) { _state |= state; }
-    void Text_area::remove_state(const State state) { _state &= (~state); }
-    bool Text_area::has_state(const State state) const {
+    void Text_area::set_state(const uint8_t state) { _state = state; }
+    void Text_area::add_state(const uint8_t state) { _state |= state; }
+    void Text_area::remove_state(const uint8_t state) { _state &= (~state); }
+    bool Text_area::has_state(const uint8_t state) const {
         if ( (_state & state) == state) {
             return true;
         }
@@ -106,9 +120,8 @@ namespace battleships::ui {
         return total_size;
     }
 
-    //Not implemented
+    //Not implemented - !!!YET!!!
     sf::Vector2f Text_area::get_scale() const {
-        LOG(utils::Log_lvl::WARN) << "Attempting to use unimplemented function.";
         return {};
     }
 
@@ -122,6 +135,11 @@ namespace battleships::ui {
 
         NULL_CHECK(_content_area)
         return _content_area->getSize();
+    }
+
+    sf::Color Text_area::get_caret_color() const {
+        NULL_CHECK(_caret.rect)
+        return _caret.rect->getFillColor();
     }
 
     float Text_area::get_scoll_bar_width() const {
@@ -172,9 +190,11 @@ namespace battleships::ui {
         //Set the typing text area position
         _content_area->setPosition(pos);
         reposition_scroll_bar();
-
         resize_scroll_bar(); //This function will be deleted from here later
+        set_view();
+        reposition_caret(0);
         //In future text will need to wrap up again
+        //In future scrollbar will clamp to the top
     }
 
     void Text_area::set_size(sf::Vector2f const size) {
@@ -191,11 +211,15 @@ namespace battleships::ui {
         //The text_area size has changed, scrollbar will reset to the top
         //along with all contents
         reposition_scroll_bar();
-
+        set_view();
+        reposition_caret(0);
         //In future text will need to wrap up again
     }
 
-    void Text_area::set_scale(sf::Vector2f const scale) { static_cast<void> (scale); } //Not implemented
+    //Not implemented !!!YET!!!
+    void Text_area::set_scale(sf::Vector2f const scale) {
+        static_cast<void> (scale);
+    }
 
     void Text_area::set_content_area_color(const sf::Color color) {
 
@@ -211,6 +235,8 @@ namespace battleships::ui {
         new_size.x = width;
         _content_area->setSize(new_size);
         reposition_scroll_bar();
+        set_view();
+        reposition_caret(0);
     }
 
     void Text_area::set_content_area_height(const float height) {
@@ -227,6 +253,14 @@ namespace battleships::ui {
         _bar_background->setSize(new_size);
 
         reposition_scroll_bar();
+        set_view();
+        reposition_caret(0);
+
+    }
+
+    void Text_area::set_caret_color(const sf::Color color) {
+        NULL_CHECK_VOID(_caret.rect)
+        _caret.rect->setFillColor(color);
     }
 
     void Text_area::set_scroll_bar_width(const float width) {
@@ -307,6 +341,116 @@ namespace battleships::ui {
         _scroll_bar->setSize(temp);
     }
 
+    void Text_area::reposition_caret(const size_t snap_to_pos) {
+
+        NULL_CHECK_VOID(_caret.rect)
+        NULL_CHECK_VOID(_text)
+        NULL_CHECK_VOID(_font)
+
+        //Work from here!!!
+
+        if (snap_to_pos > _text->getString().getSize()) {
+            //Do nothing, cannot snap to a string pos that does not exist
+        }
+        else if (snap_to_pos == 0 && _text->getString().getSize() == 0) {
+
+            sf::String string { _text->getString() };
+            string.insert(0,'a');
+            _text->setString(string);
+
+            const auto& shaped_glyphs { _text->getShapedGlyphs() };
+            const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
+            const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
+            _caret.rect->setSize({caret_width, caret_height});
+
+            const sf::Vector2f pen_line_pos { shaped_glyphs[0].position };
+            sf::Vector2f caret_pos { pen_line_pos };
+
+            caret_pos.x += shaped_glyphs[0].glyph.bounds.position.x;
+            caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+            caret_pos = _text->getTransform().transformPoint(caret_pos);
+            caret_pos.x -= _caret.rect->getSize().x;
+
+            _caret.rect->setPosition(caret_pos);
+
+            string = _text->getString();
+            string.erase(0,1);
+            _text->setString(string);
+        }
+        else if (snap_to_pos == 0) {
+
+            const auto& shaped_glyphs { _text->getShapedGlyphs() };
+            const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
+            const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
+            _caret.rect->setSize({caret_width, caret_height});
+
+            const sf::Vector2f pen_line_pos { shaped_glyphs[0].position };
+            sf::Vector2f caret_pos { pen_line_pos };
+
+            caret_pos.x += shaped_glyphs[0].glyph.bounds.position.x;
+            caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+            caret_pos = _text->getTransform().transformPoint(caret_pos);
+            caret_pos.x -= _caret.rect->getSize().x;
+
+            _caret.rect->setPosition(caret_pos);
+        }
+        else {
+            const auto& shaped_glyphs { _text->getShapedGlyphs() };
+            const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
+            const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
+            _caret.rect->setSize({caret_width, caret_height});
+
+            const sf::Vector2f pen_line_pos { shaped_glyphs[snap_to_pos - 1].position };
+            sf::Vector2f caret_pos { pen_line_pos };
+
+            caret_pos.x += shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.x +
+                          shaped_glyphs[snap_to_pos - 1].glyph.bounds.size.x;
+            caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+
+            std::cout << shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.x <<  " / " <<
+                         shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.y << std::endl;
+
+            caret_pos = _text->getTransform().transformPoint(caret_pos);
+            caret_pos.x -= _caret.rect->getSize().x;
+
+            _caret.rect->setPosition(caret_pos);
+        }
+    }
+
+    void move_caret(const size_t delta);
+
+    void Text_area::set_view() {
+
+        NULL_CHECK_VOID(_content_area)
+        NULL_CHECK_VOID(_view)
+
+        const sf::Vector2f box_pos { _content_area->getPosition() };
+        const sf::Vector2f box_size { _content_area->getSize() };
+        const sf::Vector2f window_size { _window.getSize() };
+
+        const sf::FloatRect view_setup(
+            { box_pos.x  / window_size.x, box_pos.y  / window_size.y },
+            { box_size.x / window_size.x, box_size.y / window_size.y }
+        );
+
+        if (box_size.x == 0 || box_size.y == 0) {
+            LOG(Log_lvl::WARN) << "View setup skipped for text area.\n"
+            "View cannot be applied to a 0.0 size for X and Y values.\n"
+            "Text will default write to 0.0f position.";
+            return;
+        }
+
+        _view->setSize(box_size);
+        _view->setCenter(_content_area->getGlobalBounds().getCenter());
+        _view->setViewport(view_setup);
+        _view->setScissor(view_setup);
+
+        // Set text position to the view
+        _text->setPosition(box_pos);
+        // X and Y axis padding
+        _text->move({4.5f, -11.5f});
+    }
+
     void Text_area::scrolling(const sf::Vector2f mouse_pos) {
 
         NULL_CHECK_VOID(_scroll_bar)
@@ -340,10 +484,50 @@ namespace battleships::ui {
         _scroll_bar->setPosition(final_pos);
     }
 
+    //Implement Caret before continuing :) -- Refactor with the caret
     void Text_area::build_string(const char32_t unicode) {
 
-        _text->getString();
-        sf::String;
+        /*
+        Not all may be used or implemented below, but it's good to keep a simple reference to
+        some common code values in the case that I have to do logic checks on unicode values.
+        And if I ever need to add them I will simply just refer to my enum list below.
+
+        For example: if we pressed backspace I need to know
+        it was backspace and handle this unique case.
+        */
+    enum Unicodes : char32_t {
+        BACKSPACE       = 8,      // '\b'
+        TABSTOP         = 9,      // '\t'
+        LINE_FEED       = 10,     // '\n'  Enter on Unix
+        CARRIAGE_RETURN = 13,     // '\r'  Enter on Windows
+        ESCAPE          = 27,     // '\x1b'
+        SPACE           = 32,     // ' '
+        DELETE          = 127,    // DEL key
+    };
+
+        NULL_CHECK_VOID(_text)
+        sf::String string { _text->getString() };
+
+        if (unicode == Unicodes::BACKSPACE) {
+            if (!string.isEmpty()) {
+                string.erase(string.getSize() - 1, 1);
+                _text->setString(string);
+                _caret.index -= 1;
+                reposition_caret(_caret.index);
+            }
+        }
+        else if (unicode == Unicodes::CARRIAGE_RETURN) {
+            string.insert(string.getSize(), '\n');
+            _text->setString(string);
+            //Handle next!!!
+        }
+        else {
+            string.insert(string.getSize(), unicode);
+            _text->setString(string);
+            _caret.index += 1;
+            reposition_caret(_caret.index);
+        }
+        std::cout << string.getSize()  << '\n';
     }
 
     void Text_area::register_events() {
