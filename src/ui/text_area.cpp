@@ -347,11 +347,10 @@ namespace battleships::ui {
         NULL_CHECK_VOID(_text)
         NULL_CHECK_VOID(_font)
 
-        //Work from here!!!
-
         if (snap_to_pos > _text->getString().getSize()) {
             //Do nothing, cannot snap to a string pos that does not exist
         }
+        //edge case, there is no characters currently
         else if (snap_to_pos == 0 && _text->getString().getSize() == 0) {
 
             sf::String string { _text->getString() };
@@ -377,6 +376,7 @@ namespace battleships::ui {
             string.erase(0,1);
             _text->setString(string);
         }
+        //Going to the start of the line
         else if (snap_to_pos == 0) {
 
             const auto& shaped_glyphs { _text->getShapedGlyphs() };
@@ -395,25 +395,52 @@ namespace battleships::ui {
             _caret.rect->setPosition(caret_pos);
         }
         else {
-            const auto& shaped_glyphs { _text->getShapedGlyphs() };
-            const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
-            const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
-            _caret.rect->setSize({caret_width, caret_height});
+            //Newline character was entered
+            if (_text->getString()[snap_to_pos - 1] == U'\n') {
 
-            const sf::Vector2f pen_line_pos { shaped_glyphs[snap_to_pos - 1].position };
-            sf::Vector2f caret_pos { pen_line_pos };
+                sf::String string { _text->getString() };
+                string.insert(snap_to_pos,'a');
+                _text->setString(string);
 
-            caret_pos.x += shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.x +
-                          shaped_glyphs[snap_to_pos - 1].glyph.bounds.size.x;
-            caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+                const auto& shaped_glyphs { _text->getShapedGlyphs() };
+                const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
+                const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
+                _caret.rect->setSize({caret_width, caret_height});
 
-            std::cout << shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.x <<  " / " <<
-                         shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.y << std::endl;
+                const sf::Vector2f pen_line_pos { shaped_glyphs[snap_to_pos].position };
+                sf::Vector2f caret_pos { pen_line_pos };
 
-            caret_pos = _text->getTransform().transformPoint(caret_pos);
-            caret_pos.x -= _caret.rect->getSize().x;
+                caret_pos.x += shaped_glyphs[snap_to_pos].glyph.bounds.position.x;
+                caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+                caret_pos = _text->getTransform().transformPoint(caret_pos);
+                caret_pos.x -= _caret.rect->getSize().x;
 
-            _caret.rect->setPosition(caret_pos);
+                _caret.rect->setPosition(caret_pos);
+
+                string = _text->getString();
+                string.erase(snap_to_pos,1);
+                _text->setString(string);
+            }
+            //Normal character was entered
+            else {
+
+                const auto& shaped_glyphs { _text->getShapedGlyphs() };
+                const float caret_height { _font->getAscent(_text->getCharacterSize()) - _font->getDescent(_text->getCharacterSize()) };
+                const float caret_width { _text->getLetterSpacing() * _text->getCharacterSize() * 0.06f};
+                _caret.rect->setSize({caret_width, caret_height});
+
+                const sf::Vector2f pen_line_pos { shaped_glyphs[snap_to_pos - 1].position };
+                sf::Vector2f caret_pos { pen_line_pos };
+
+                caret_pos.x += shaped_glyphs[snap_to_pos - 1].glyph.bounds.position.x +
+                              shaped_glyphs[snap_to_pos - 1].glyph.bounds.size.x;
+                caret_pos.y -= _font->getAscent(_text->getCharacterSize());
+
+                caret_pos = _text->getTransform().transformPoint(caret_pos);
+                caret_pos.x -= _caret.rect->getSize().x;
+
+                _caret.rect->setPosition(caret_pos);
+            }
         }
     }
 
@@ -448,7 +475,7 @@ namespace battleships::ui {
         // Set text position to the view
         _text->setPosition(box_pos);
         // X and Y axis padding
-        _text->move({4.5f, -11.5f});
+        _text->move({4.5f, 0.0f});
     }
 
     void Text_area::scrolling(const sf::Vector2f mouse_pos) {
@@ -519,7 +546,8 @@ namespace battleships::ui {
         else if (unicode == Unicodes::CARRIAGE_RETURN) {
             string.insert(string.getSize(), '\n');
             _text->setString(string);
-            //Handle next!!!
+            _caret.index += 1;
+            reposition_caret(_caret.index);
         }
         else {
             string.insert(string.getSize(), unicode);
@@ -527,7 +555,6 @@ namespace battleships::ui {
             _caret.index += 1;
             reposition_caret(_caret.index);
         }
-        std::cout << string.getSize()  << '\n';
     }
 
     void Text_area::register_events() {
