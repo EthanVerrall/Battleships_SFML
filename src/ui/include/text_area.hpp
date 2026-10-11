@@ -87,6 +87,11 @@ private:
         std::size_t index;
     };
 
+    enum class Glyph_edge : std::uint8_t {
+        LEFT,
+        RIGHT,
+    };
+
     //--------------------------
     // Getters
     //--------------------------
@@ -101,6 +106,8 @@ public:
     sf::Color get_content_area_color() const;
     sf::Vector2f get_content_area_size() const; // This returns the size of the typing zone for your text area
     sf::Color get_caret_color() const;
+    unsigned int get_character_size() const;
+    std::string_view get_font_name() const;
 
     // Scroll functions
     float get_scoll_bar_width() const;
@@ -144,6 +151,8 @@ public:
     void set_content_area_width(const float width);
     void set_content_area_height(const float height);
     void set_caret_color(const sf::Color color);
+    void set_character_size(const unsigned int character_size);
+    void set_font(const std::string_view font_name);
 
     // Scroll functions
     void set_scroll_bar_width(const float width);
@@ -164,9 +173,9 @@ private:
     void resize_scroll_bar();
 
     //Working on
-    void reposition_caret(const size_t snap_to_pos);
-    //Working on
-    void move_caret(const size_t delta);
+    void resize_caret();
+    void reposition_caret(const std::size_t target);
+    sf::Vector2f get_glyph_global_pos(const std::size_t vector_index, const Glyph_edge glyph_edge) const;
 
     //Working on
     void set_view();
